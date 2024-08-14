@@ -1,0 +1,1 @@
+extension EnumX on Enum {}
