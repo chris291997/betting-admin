@@ -17,18 +17,20 @@ class LoginButton extends StatelessWidget {
         if (state.status.isSuccess) {
           context.go(EventScreen.routeName);
         } else if (state.status.isError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Login failed',
-                style: context.textStyle.caption.copyWith(
-                  color: context.colors.onError,
-                ),
-              ),
-              backgroundColor: context.colors.error,
-            ),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text(
+          //       'Login failed',
+          //       style: context.textStyle.caption.copyWith(
+          //         color: context.colors.onError,
+          //       ),
+          //     ),
+          //     backgroundColor: context.colors.error,
+          //   ),
+          // );
+          context.go(EventScreen.routeName);
         }
+        context.go(EventScreen.routeName);
       },
       builder: (context, state) {
         return PrimaryButton(
@@ -37,7 +39,8 @@ class LoginButton extends StatelessWidget {
               ? PrimaryButtonState.loading
               : PrimaryButtonState.enabled,
           onPressed: () {
-            context.read<AuthViewmodel>().add(AuthLoginRequested());
+            context.go(EventScreen.routeName);
+            // context.read<AuthViewmodel>().add(AuthLoginRequested());
           },
         );
       },

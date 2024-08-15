@@ -1,5 +1,4 @@
-import 'package:bet/common/helper/extension/json.dart';
-import 'package:equatable/equatable.dart';
+part of '../../di/event_service_locator.dart';
 
 class EventOutput extends Equatable {
   const EventOutput({
