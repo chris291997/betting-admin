@@ -28,7 +28,7 @@ class SideNavigationBar extends StatelessWidget {
         NavigationRailDestination(
           icon: Icon(Icons.sports_mma),
           selectedIcon: Icon(Icons.sports_mma),
-          label: Text('Fights'),
+          label: Text('Fighters'),
         ),
         NavigationRailDestination(
           icon: Icon(Icons.person),

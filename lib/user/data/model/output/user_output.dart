@@ -1,8 +1,7 @@
-import 'package:bet/common/helper/extension/json.dart';
-import 'package:equatable/equatable.dart';
+part of '../../di/user_service_locator.dart';
 
-class User extends Equatable {
-  const User({
+class UserOutput extends Equatable {
+  const UserOutput({
     this.id = '',
     this.type = UserType.none,
     this.firstName = '',
@@ -24,7 +23,7 @@ class User extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  static const User empty = User(
+  static const UserOutput empty = UserOutput(
     id: '',
     type: UserType.pos,
     firstName: '',
@@ -34,8 +33,8 @@ class User extends Equatable {
     createdBy: '',
   );
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserOutput.fromJson(Map<String, dynamic> json) {
+    return UserOutput(
       id: json.parseString('id'),
       firstName: json.parseString('firstName'),
       middleName: json.parseString('middleName'),
@@ -47,7 +46,7 @@ class User extends Equatable {
     );
   }
 
-  User copyWith({
+  UserOutput copyWith({
     String? id,
     UserType? type,
     String? firstName,
@@ -58,7 +57,7 @@ class User extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return User(
+    return UserOutput(
       id: id ?? this.id,
       type: type ?? this.type,
       firstName: firstName ?? this.firstName,
@@ -70,6 +69,9 @@ class User extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  bool get isNotEmpty => this != UserOutput.empty;
+  bool get isEmpty => !isNotEmpty;
 
   @override
   List<Object?> get props => [

@@ -10,6 +10,7 @@ class CreateEventBloc extends Bloc<EventCreateEvent, CreateEventState> {
     on<EventCreateEventNameAdded>(_onEventEventNameAdded);
     on<EventCreateEventDateAdded>(_onEventEventDateAdded);
     on<EventCreateEventLocationAdded>(_onEventEventLocationAdded);
+    on<EventCreatedEventCreatorAdded>(_onEventEventCreatorAdded);
     on<EventCreated>(_onEventEventCreated);
   }
 
@@ -41,10 +42,20 @@ class CreateEventBloc extends Bloc<EventCreateEvent, CreateEventState> {
     );
   }
 
+  void _onEventEventCreatorAdded(
+      EventCreatedEventCreatorAdded event, Emitter<CreateEventState> emit) {
+    emit(
+      state.copyWith(
+        eventInput: state.eventInput.copyWith(creatorId: event.creatorId),
+      ),
+    );
+  }
+
   void _onEventEventCreated(
       EventCreated event, Emitter<CreateEventState> emit) async {
     try {
       emit(state.copyWith(status: CreateEventStatus.loading));
+      print(state.eventInput);
       await _eventRepository.createEvent(input: state.eventInput);
       emit(state.copyWith(status: CreateEventStatus.success));
     } catch (e) {

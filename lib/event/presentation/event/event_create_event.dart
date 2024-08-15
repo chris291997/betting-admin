@@ -34,4 +34,13 @@ class EventCreateEventDateAdded extends EventCreateEvent {
   List<Object> get props => [date];
 }
 
+class EventCreatedEventCreatorAdded extends EventCreateEvent {
+  const EventCreatedEventCreatorAdded(this.creatorId);
+
+  final String creatorId;
+
+  @override
+  List<Object> get props => [creatorId];
+}
+
 class EventCreated extends EventCreateEvent {}

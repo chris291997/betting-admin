@@ -1,9 +1,12 @@
 import 'package:bet/authentication/presentation/screen/login_screen.dart';
+import 'package:bet/common/di/service_locator.dart';
 import 'package:bet/dashboard/presentation/combonent/navigation_scaffold.dart';
 import 'package:bet/event/presentation/screen/event_screen.dart';
 import 'package:bet/fighter/presentation/screen/fighter_list_screen.dart';
-import 'package:bet/user/presentation/screen/screen.dart';
+import 'package:bet/user/presentation/bloc/account_bloc.dart';
+import 'package:bet/user/presentation/screen/user_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -63,12 +66,15 @@ final router = GoRouter(
     ),
   ],
   redirect: (context, state) async {
-    // final accessToken = await cacheService.read(StorageKey.accessToken);
-    // if (accessToken != null) {
-    //   return null;
-    // }
+    final accountBloc = context.read<AccountBloc>();
+    final accessToken = await cacheService.read(StorageKey.accessToken);
 
-    // return LoginScreen.routeName;
-    return null;
+    if (accessToken != null) {
+      accountBloc.add(AccountEventLoggedUserRequested());
+
+      return null;
+    }
+
+    return LoginScreen.routeName;
   },
 );

@@ -1,45 +1,66 @@
+import 'package:bet/fighter/presentation/bloc/fighter_list_bloc.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FighterListView extends StatelessWidget {
   const FighterListView({super.key});
-  static const List<String> _columnNames = ['Name', 'Weight', 'Breed', 'Owner'];
+
+  static const List<String> _columnNames = [
+    'Name',
+    'Weight',
+    'Breed',
+    'Trainer'
+  ];
   static final _columns =
       _columnNames.map((column) => DataColumn(label: Text(column))).toList();
 
   @override
   Widget build(BuildContext context) {
-    return DataTable2(
-      columnSpacing: 12,
-      horizontalMargin: 12,
-      minWidth: 100,
-      columns: _columns,
-      showHeadingCheckBox: false,
-      showCheckboxColumn: false,
-      rows: List<DataRow>.generate(
-        100,
-        (index) => DataRow(
-          onSelectChanged: (value) {
-            print('row $index selected');
-          },
-          cells: const [
-            DataCell(
-              Text('A'),
-            ),
-            DataCell(
-              Text('B'),
-            ),
-            DataCell(
-              Text('C'),
-            ),
-            DataCell(
-              Text(
-                'D',
-              ),
-            ),
-          ],
-        ),
-      ),
+    return BlocBuilder<FighterListBloc, FighterListState>(
+      builder: (context, state) {
+        if (state.status.isError) {
+          return const Center(child: Text('Failed to fetch fighters'));
+        }
+
+        if (state.status.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state.status.isInitial) {
+          return const SizedBox();
+        }
+
+        final fighters = state.fighters;
+
+        return DataTable2(
+          columnSpacing: 12,
+          horizontalMargin: 12,
+          minWidth: 100,
+          columns: _columns,
+          showHeadingCheckBox: false,
+          showCheckboxColumn: false,
+          rows: fighters
+              .map((fighter) => DataRow(
+                    onSelectChanged: (value) {},
+                    cells: [
+                      DataCell(
+                        Text(fighter.name),
+                      ),
+                      DataCell(
+                        Text(fighter.weight.toString()),
+                      ),
+                      DataCell(
+                        Text(fighter.breed),
+                      ),
+                      DataCell(
+                        Text(fighter.trainer),
+                      ),
+                    ],
+                  ))
+              .toList(),
+        );
+      },
     );
   }
 }
