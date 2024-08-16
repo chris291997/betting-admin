@@ -1,10 +1,16 @@
-import 'package:bet/fight/presentation/bloc/create_fight_bloc.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 class FightStartTimePicker extends StatelessWidget {
-  const FightStartTimePicker({super.key});
+  const FightStartTimePicker({
+    super.key,
+    required this.onTimeChanged,
+    this.initialTime,
+  });
+
+  final Time? initialTime;
+  final Function(Time) onTimeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -13,37 +19,31 @@ class FightStartTimePicker extends StatelessWidget {
       minute: 30,
     );
 
-    return BlocSelector<CreateFightBloc, CreateFightState, String>(
-      selector: (state) {
-        return state.fightInput.startTime;
-      },
-      builder: (context, startTime) {
-        return Row(
-          children: [
-            const Text("Fight Start Time:"),
-            const SizedBox(width: 10),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).push(
-                  showPicker(
-                    context: context,
-                    value: time,
-                    minuteInterval: TimePickerInterval.FIVE,
-                    onChange: (value) => {
-                      context.read<CreateFightBloc>().add(
-                            FightCreateEventStartTimeAdded(
-                              value.toString(),
-                            ),
-                          )
-                    },
-                  ),
-                );
-              },
-              child: Text(startTime.isNotEmpty ? startTime : "Select Time"),
-            ),
-          ],
-        );
-      },
+    final currentSelectedTime = useState(initialTime);
+
+    return Row(
+      children: [
+        const Text("Fight Start Time:"),
+        const SizedBox(width: 10),
+        ElevatedButton(
+          onPressed: () async {
+            Navigator.of(context).push(
+              showPicker(
+                context: context,
+                value: currentSelectedTime.value ?? time,
+                minuteInterval: TimePickerInterval.FIVE,
+                onChange: (time) {
+                  onTimeChanged.call(time);
+                  currentSelectedTime.value = time;
+                },
+              ),
+            );
+          },
+          child: Text(currentSelectedTime.value != null
+              ? currentSelectedTime.value.toString()
+              : "Select Time"),
+        ),
+      ],
     );
   }
 }

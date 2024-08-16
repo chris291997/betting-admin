@@ -1,6 +1,6 @@
 part of '../../di/event_service_locator.dart';
 
-class EventOutput extends Equatable {
+class EventOutput extends Equatable implements JsonSerializable {
   const EventOutput({
     this.id = '',
     this.eventName = '',
@@ -29,6 +29,27 @@ class EventOutput extends Equatable {
       createdAt: json.parseDateTime('createdAt'),
       updatedAt: json.parseDateTime('updatedAt'),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'eventName': eventName,
+      'location': location,
+      'creatorId': creatorId,
+      'eventDate': eventDate?.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+    };
+  }
+
+  @override
+  Map<String, dynamic> toTableJson() {
+    return {
+      'eventName': eventName,
+      'location': location,
+      'eventDate': eventDate?.toIso8601String(),
+    };
   }
 
   @override

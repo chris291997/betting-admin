@@ -1,17 +1,23 @@
 import 'package:bet/common/component/textfield/base_textfield.dart';
-import 'package:bet/event/presentation/bloc/create_event_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class EventNameField extends StatelessWidget {
-  const EventNameField({super.key});
+class EventNameField extends HookWidget {
+  const EventNameField({
+    super.key,
+    required this.onEventNameChanged,
+    this.initialValue = '',
+  });
+  final String initialValue;
+  final Function(String) onEventNameChanged;
 
   @override
   Widget build(BuildContext context) {
+    final controller = useTextEditingController(text: initialValue);
     return BaseTextfield(
-        onChanged: (value) {
-          context.read<CreateEventBloc>().add(EventCreateEventNameAdded(value));
-        },
-        labelText: "Name");
+      controller: controller,
+      onChanged: onEventNameChanged,
+      labelText: "Name",
+    );
   }
 }

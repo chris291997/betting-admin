@@ -1,4 +1,5 @@
 import 'package:bet/common/di/service_locator.dart';
+import 'package:bet/common/abstract/json_serializable.dart';
 import 'package:bet/common/helper/extension/json.dart';
 import 'package:equatable/equatable.dart';
 

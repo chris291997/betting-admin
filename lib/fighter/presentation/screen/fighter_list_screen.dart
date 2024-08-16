@@ -1,3 +1,4 @@
+import 'package:bet/common/component/button/primary_button.dart';
 import 'package:bet/common/component/button/secondary_button.dart';
 import 'package:bet/fighter/data/di/fighter_service_locator.dart';
 import 'package:bet/fighter/presentation/bloc/create_fighter_bloc.dart';
@@ -27,7 +28,7 @@ class FighterListScreen extends StatelessWidget {
 }
 
 class _FighterListScreen extends StatelessWidget {
-  const _FighterListScreen({super.key});
+  const _FighterListScreen();
 
   void _showCreateFighterModal(BuildContext contextFromParent) {
     showDialog(
@@ -42,8 +43,51 @@ class _FighterListScreen extends StatelessWidget {
             value: BlocProvider.of<FighterListBloc>(contextFromParent),
           ),
         ],
-        child: const FighterModal(
-          type: FighterModalType.add,
+        child: BlocConsumer<CreateFighterBloc, CreateFighterState>(
+          listener: (context, state) {
+            if (state.status.isSuccess) {
+              BlocProvider.of<FighterListBloc>(contextFromParent)
+                  .add(FighterListFetched());
+
+              Navigator.pop(context);
+            }
+          },
+          builder: (context, state) {
+            return FighterModal(
+              type: FighterModalType.add,
+              createOrUpdateButtonState: state.status.isLoading
+                  ? PrimaryButtonState.loading
+                  : PrimaryButtonState.enabled,
+              onFighterNameChanged: (name) {
+                BlocProvider.of<CreateFighterBloc>(context).add(
+                  FighterCreateEventNameAdded(name),
+                );
+              },
+              onFighterWeightChanged: (value) {
+                final weight = int.tryParse(value);
+                if (weight != null) {
+                  BlocProvider.of<CreateFighterBloc>(context).add(
+                    FighterCreateEventWeightAdded(weight),
+                  );
+                }
+              },
+              onFighterBreedChanged: (breed) {
+                BlocProvider.of<CreateFighterBloc>(context).add(
+                  FighterCreateEventBreedAdded(breed),
+                );
+              },
+              onFighterTrainerChanged: (owner) {
+                BlocProvider.of<CreateFighterBloc>(context).add(
+                  FighterCreateEventTrainerAdded(owner),
+                );
+              },
+              createOrUpdateButtonOnPressed: () {
+                BlocProvider.of<CreateFighterBloc>(context).add(
+                  FighterCreated(),
+                );
+              },
+            );
+          },
         ),
       ),
     );

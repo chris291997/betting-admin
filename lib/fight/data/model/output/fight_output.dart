@@ -1,6 +1,6 @@
 part of '../../di/fight_service_locator.dart';
 
-class FightOutput extends Equatable {
+class FightOutput extends Equatable implements JsonSerializable {
   const FightOutput({
     this.id = '',
     this.eventId = '',
@@ -43,7 +43,6 @@ class FightOutput extends Equatable {
       updatedAt: json['updatedAt'] as String,
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -54,6 +53,16 @@ class FightOutput extends Equatable {
       'startTime': startTime,
       'isLocked': isLocked,
       'winnerId': winnerId,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
+  }
+
+  @override
+  Map<String, dynamic> toTableJson() {
+    return {
+      'fightNumber': fightNumber,
+      'startTime': startTime,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -73,16 +82,3 @@ class FightOutput extends Equatable {
         updatedAt,
       ];
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

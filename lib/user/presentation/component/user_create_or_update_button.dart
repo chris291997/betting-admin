@@ -1,17 +1,15 @@
 import 'package:bet/common/component/button/primary_button.dart';
-import 'package:bet/fighter/presentation/bloc/create_fighter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FighterAddOrUpdateButton extends StatelessWidget {
-  const FighterAddOrUpdateButton({
+class UserCreateOrUpdateButton extends StatelessWidget {
+  const UserCreateOrUpdateButton({
     super.key,
-    required this.createOrUpdateButtonState,
-    required this.buttonLabel,
     required this.createOrUpdateButtonOnPressed,
+    this.submitButtonState = PrimaryButtonState.enabled,
+    this.buttonLabel = 'Submit',
   });
 
-  final PrimaryButtonState createOrUpdateButtonState;
+  final PrimaryButtonState submitButtonState;
   final String buttonLabel;
   final void Function() createOrUpdateButtonOnPressed;
 
@@ -20,7 +18,7 @@ class FighterAddOrUpdateButton extends StatelessWidget {
     return PrimaryButton(
       onPressed: createOrUpdateButtonOnPressed,
       labelText: buttonLabel,
-      state: createOrUpdateButtonState,
+      state: submitButtonState,
     );
   }
 }

@@ -1,6 +1,6 @@
 part of '../../di/user_service_locator.dart';
 
-class UserOutput extends Equatable {
+class UserOutput extends Equatable implements JsonSerializable {
   const UserOutput({
     this.id = '',
     this.type = UserType.none,
@@ -44,6 +44,31 @@ class UserOutput extends Equatable {
       createdAt: json.parseDateTime('createdAt'),
       updatedAt: json.parseDateTime('updatedAt'),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'middleName': middleName,
+      'lastName': lastName,
+      'userName': username,
+      'createdBy': createdBy,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+    };
+  }
+
+  @override
+  Map<String, dynamic> toTableJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'middleName': middleName,
+      'lastName': lastName,
+      'userName': username,
+      'createdBy': createdBy,
+    };
   }
 
   UserOutput copyWith({
@@ -97,4 +122,28 @@ enum UserType {
   bool get isPos => this == UserType.pos;
 
   bool get isAdmin => this == UserType.admin;
+
+  String get value {
+    switch (this) {
+      case UserType.none:
+        return 'None';
+      case UserType.pos:
+        return 'Pos';
+      case UserType.admin:
+        return 'Admin';
+    }
+  }
+
+  static UserType fromString(String value) {
+    switch (value) {
+      case 'None':
+        return UserType.none;
+      case 'Pos':
+        return UserType.pos;
+      case 'Admin':
+        return UserType.admin;
+      default:
+        return UserType.none;
+    }
+  }
 }

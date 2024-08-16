@@ -54,7 +54,7 @@ class NetworkManager {
 
   Future<String?> _refreshToken() async {
     final refreshToken = await _cacheService.read(StorageKey.refreshToken);
-    final response = await post('/refresh_token', data: {
+    final response = await post('/auth/refresh', data: {
       'refreshToken': refreshToken,
     });
 

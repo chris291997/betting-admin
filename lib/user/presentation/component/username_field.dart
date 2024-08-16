@@ -2,23 +2,21 @@ import 'package:bet/common/component/textfield/base_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class FighterNameField extends HookWidget {
-  const FighterNameField({
+class UsernameField extends HookWidget {
+  const UsernameField({
     super.key,
-    required this.onFighterNameChanged,
+    required this.onUsernameChanged,
     this.initialValue = '',
   });
-
   final String initialValue;
+  final Function(String) onUsernameChanged;
 
-  final Function(String) onFighterNameChanged;
   @override
   Widget build(BuildContext context) {
     final controller = useTextEditingController(text: initialValue);
-
     return BaseTextfield(
-      onChanged: onFighterNameChanged,
-      labelText: "Name",
+      onChanged: onUsernameChanged,
+      labelText: "Username",
       controller: controller,
     );
   }
