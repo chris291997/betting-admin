@@ -9,6 +9,8 @@ class UpdateOrDeleteUserBloc
     extends Bloc<UpdateOrDeleteUserEvent, UpdateOrDeleteUserState> {
   UpdateOrDeleteUserBloc(this._userRepository)
       : super(const UpdateOrDeleteUserState()) {
+    on<UserUpdateEventUserInitialValueAdded>(
+        _onUserUpdateEventUserInitialValueAdded);
     on<UserUpdateEventUserTypeAdded>(_onUserUpdateEventUserTypeAdded);
     on<UserUpdateEventFirstNameAdded>(_onUserUpdateEventFirstNameAdded);
     on<UserUpdateEventMiddleNameAdded>(_onUserUpdateEventMiddleNameAdded);
@@ -20,6 +22,13 @@ class UpdateOrDeleteUserBloc
   }
 
   final UserRepository _userRepository;
+
+  void _onUserUpdateEventUserInitialValueAdded(
+      UserUpdateEventUserInitialValueAdded event,
+      Emitter<UpdateOrDeleteUserState> emit) {
+    emit(state.copyWith(updateUserInput: event.userInitialValue));
+  }
+
   void _onUserUpdateEventUserTypeAdded(UserUpdateEventUserTypeAdded event,
       Emitter<UpdateOrDeleteUserState> emit) {
     emit(state.copyWith(

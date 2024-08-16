@@ -7,6 +7,15 @@ sealed class UpdateOrDeleteUserEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class UserUpdateEventUserInitialValueAdded extends UpdateOrDeleteUserEvent {
+  const UserUpdateEventUserInitialValueAdded(this.userInitialValue);
+
+  final UpdateUserInput userInitialValue;
+
+  @override
+  List<Object> get props => [userInitialValue];
+}
+
 class UserUpdateEventUserTypeAdded extends UpdateOrDeleteUserEvent {
   const UserUpdateEventUserTypeAdded(this.userType);
 

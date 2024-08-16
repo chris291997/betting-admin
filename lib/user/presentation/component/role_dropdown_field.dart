@@ -14,23 +14,31 @@ class RoleDropdownField extends HookWidget {
   Widget build(BuildContext context) {
     final role = useState(initialValue);
 
-    return DropdownButton<String>(
-      value: role.value.isEmpty ? 'None' : role.value,
-      items: <String>[
-        'None',
-        'Pos',
-        'Admin',
-      ].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-      onChanged: (newRole) {
-        onRoleChanged(newRole ?? 'None');
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(role.value.isEmpty ? 'None' : role.value),
+        SizedBox(
+          child: DropdownButton<String>(
+            // value: role.value.isEmpty ? 'None' : role.value,
+            items: <String>[
+              'None',
+              'Pos',
+              'Admin',
+            ].map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (newRole) {
+              onRoleChanged(newRole ?? 'None');
 
-        role.value = newRole ?? role.value;
-      },
+              role.value = newRole ?? role.value;
+            },
+          ),
+        ),
+      ],
     );
   }
 }

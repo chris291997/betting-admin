@@ -34,7 +34,7 @@ class FighterRemoteSource {
   }
 
   Future<List<FighterOutput>> getFighters() async {
-    final response = await _manager.post(
+    final response = await _manager.get(
       fighterPath,
     );
 

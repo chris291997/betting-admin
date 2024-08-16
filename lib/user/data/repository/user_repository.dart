@@ -20,7 +20,7 @@ class UserRepository implements UserRepositoryInterface {
   @override
   Future<UserOutput> updateUser(
       {required String userId, required UpdateUserInput input}) async {
-    return _remoteSource.updateUser(input: input);
+    return _remoteSource.updateUser(userId: userId, input: input);
   }
 
   @override

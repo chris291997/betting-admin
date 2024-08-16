@@ -36,6 +36,7 @@ class UserOutput extends Equatable implements JsonSerializable {
   factory UserOutput.fromJson(Map<String, dynamic> json) {
     return UserOutput(
       id: json.parseString('id'),
+      type: UserType.fromString(json.parseString('userType')),
       firstName: json.parseString('firstName'),
       middleName: json.parseString('middleName'),
       lastName: json.parseString('lastName'),
@@ -62,7 +63,7 @@ class UserOutput extends Equatable implements JsonSerializable {
   @override
   Map<String, dynamic> toTableJson() {
     return {
-      'id': id,
+      'userType': type.name,
       'firstName': firstName,
       'middleName': middleName,
       'lastName': lastName,

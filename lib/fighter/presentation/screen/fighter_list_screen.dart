@@ -19,7 +19,7 @@ class FighterListScreen extends StatelessWidget {
       providers: [
         BlocProvider(
           lazy: false,
-          create: (context) => FighterListBloc(fighterRepository),
+          create: (context) => FighterListBloc(fighterRepository)..add(FighterListFetched()),
         ),
       ],
       child: const _FighterListScreen(),

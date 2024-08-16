@@ -5,7 +5,7 @@ class UserRemoteSource {
 
   final NetworkManager _manager;
 
-  static const String userPath = '/Users';
+  static const String userPath = '/users';
 
   Future<UserOutput> getLoggedUser() async {
     final response = await _manager.get(
@@ -17,16 +17,17 @@ class UserRemoteSource {
 
   Future<UserOutput> createUser({required CreateUserInput input}) async {
     final response = await _manager.post(
-      '',
+      userPath,
       data: input.toJson(),
     );
 
     return UserOutput.fromJson(response.data);
   }
 
-  Future<UserOutput> updateUser({required UpdateUserInput input}) async {
-    final response = await _manager.post(
-      '',
+  Future<UserOutput> updateUser(
+      {required userId, required UpdateUserInput input}) async {
+    final response = await _manager.patch(
+      '$userPath/update/$userId',
       data: input.toJson(),
     );
 

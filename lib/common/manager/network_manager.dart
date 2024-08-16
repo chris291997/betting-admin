@@ -48,6 +48,10 @@ class NetworkManager {
     return await _httpService.put<T>(path, data: data);
   }
 
+  Future<Response<T>> patch<T>(String path, {Object? data}) async {
+    return await _httpService.patch<T>(path, data: data);
+  }
+
   Future<Response<T>> delete<T>(String path, {Object? data}) async {
     return await _httpService.delete<T>(path, data: data);
   }

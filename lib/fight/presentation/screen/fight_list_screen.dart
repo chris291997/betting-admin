@@ -4,6 +4,7 @@ import 'package:bet/common/component/table/custom_data_table.dart';
 import 'package:bet/fight/data/di/fight_service_locator.dart';
 import 'package:bet/fight/presentation/bloc/create_fight_bloc.dart';
 import 'package:bet/fight/presentation/bloc/fight_list_bloc.dart';
+import 'package:bet/fight/presentation/bloc/fight_update_or_delete_bloc.dart';
 import 'package:bet/fight/presentation/components/fight_modal.dart';
 import 'package:bet/fight/presentation/screen/fight_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,12 @@ class FightListScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            lazy: false, create: (context) => FightListBloc(fightRepository)),
+            lazy: false,
+            create: (context) => FightListBloc(fightRepository, eventId)),
+        BlocProvider(
+          create: (context) =>
+              FightUpdateOrDeleteBloc(fightRepository, eventId),
+        ),
       ],
       child: _FightListScreen(
         eventId: eventId,
@@ -46,13 +52,21 @@ class _FightListScreen extends StatelessWidget {
   static final _columns =
       _columnNames.map((column) => DataColumn(label: Text(column))).toList();
 
-  void _showCreateFighterModal(BuildContext parentContext) {
+  void _showCreateFightModal(
+    BuildContext parentContext,
+    FightModalType modalType, {
+    FightOutput? fight,
+  }) {
     showDialog(
       context: parentContext,
       builder: (context) => MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (context) => CreateFightBloc(fightRepository, eventId),
+          ),
+          BlocProvider(
+            create: (context) =>
+                FightUpdateOrDeleteBloc(fightRepository, eventId),
           ),
           BlocProvider.value(
             value: BlocProvider.of<FightListBloc>(context),
@@ -67,42 +81,88 @@ class _FightListScreen extends StatelessWidget {
               Navigator.pop(context);
             }
           },
-          builder: (context, state) {
-            return FightModal(
-              type: FightModalType.add,
-              createOrUpdateFightButtonState: state.status.isLoading
-                  ? PrimaryButtonState.loading
-                  : PrimaryButtonState.enabled,
-              onNumberChanged: (value) {
-                final fightNumber = int.tryParse(value);
-                if (fightNumber != null) {
-                  BlocProvider.of<CreateFightBloc>(context).add(
-                    FightCreateEventFightNumAdded(fightNumber),
-                  );
+          builder: (context, createState) {
+            return BlocConsumer<FightUpdateOrDeleteBloc,
+                FightUpdateOrDeleteState>(
+              listener: (context, state) {
+                if (state.updateStatus.isSuccess) {
+                  BlocProvider.of<FightListBloc>(parentContext)
+                      .add(FightListFetched(eventId));
+                  Navigator.pop(context);
                 }
               },
-              onTimeChanged: (startTime) {
-                BlocProvider.of<CreateFightBloc>(context).add(
-                  FightCreateEventStartTimeAdded(startTime.toString()),
-                );
-              },
-              onMeronSelected: (fighter) {
-                BlocProvider.of<CreateFightBloc>(context).add(
-                  FightCreateEventMeronAdded(
-                    fighter.id,
-                  ),
-                );
-              },
-              onWalaSelected: (fighter) {
-                BlocProvider.of<CreateFightBloc>(context).add(
-                  FightCreateEventWalaAdded(
-                    fighter.id,
-                  ),
-                );
-              },
-              createOrUpdateFightSubmitted: () {
-                BlocProvider.of<CreateFightBloc>(context).add(
-                  FightCreateEventStartTimeAdded(eventId),
+              builder: (context, udpateState) {
+                return FightModal(
+                  type: modalType,
+                  createOrUpdateFightButtonState:
+                      createState.status.isLoading ||
+                              udpateState.updateStatus.isLoading
+                          ? PrimaryButtonState.loading
+                          : PrimaryButtonState.enabled,
+                  onNumberChanged: (value) {
+                    final fightNumber = int.tryParse(value);
+                    if (fightNumber != null) {
+                      if (modalType.isAdd) {
+                        BlocProvider.of<CreateFightBloc>(context).add(
+                          FightCreateEventFightNumAdded(fightNumber),
+                        );
+                      } else {
+                        BlocProvider.of<FightUpdateOrDeleteBloc>(context).add(
+                          FightUpdateEventFightNumAdded(fightNumber),
+                        );
+                      }
+                    }
+                  },
+                  onTimeChanged: (startTime) {
+                    if (modalType.isAdd) {
+                      BlocProvider.of<CreateFightBloc>(context).add(
+                        FightCreateEventStartTimeAdded(startTime.toString()),
+                      );
+                    } else {
+                      BlocProvider.of<FightUpdateOrDeleteBloc>(context).add(
+                        FightUpdateEventStartTimeAdded(startTime.toString()),
+                      );
+                    }
+                  },
+                  onMeronSelected: (fighter) {
+                    if (modalType.isAdd) {
+                      BlocProvider.of<CreateFightBloc>(context).add(
+                        FightCreateEventMeronAdded(
+                          fighter.id,
+                        ),
+                      );
+                    } else {
+                      BlocProvider.of<FightUpdateOrDeleteBloc>(context).add(
+                        FightUpdateEventMeronAdded(
+                          fighter.id,
+                        ),
+                      );
+                    }
+                  },
+                  onWalaSelected: (fighter) {
+                    if (modalType.isAdd) {
+                      BlocProvider.of<CreateFightBloc>(context).add(
+                        FightCreateEventWalaAdded(
+                          fighter.id,
+                        ),
+                      );
+                    } else {
+                      BlocProvider.of<FightUpdateOrDeleteBloc>(context).add(
+                        FightUpdateEventWalaAdded(
+                          fighter.id,
+                        ),
+                      );
+                    }
+                  },
+                  createOrUpdateFightSubmitted: () {
+                    if (modalType.isAdd) {
+                      BlocProvider.of<CreateFightBloc>(context)
+                          .add(FightCreated());
+                    } else {
+                      BlocProvider.of<FightUpdateOrDeleteBloc>(context)
+                          .add(FightUpdateEvent(fight?.id ?? ''));
+                    }
+                  },
                 );
               },
             );
@@ -146,40 +206,15 @@ class _FightListScreen extends StatelessWidget {
                     ),
                   );
                 },
+                onDelete: (fight) {
+                  BlocProvider.of<FightUpdateOrDeleteBloc>(context)
+                      .add(FightDeleted(fight.id));
+                },
+                onUpdate: (fight) {
+                  _showCreateFightModal(context, FightModalType.edit,
+                      fight: fight);
+                },
               ),
-              // child: DataTable2(
-              //   columnSpacing: 12,
-              //   horizontalMargin: 12,
-              //   minWidth: 100,
-              //   columns: _columns,
-              //   showHeadingCheckBox: false,
-              //   showCheckboxColumn: false,
-              //   rows: fights
-              //       .map((fight) => DataRow(
-              //             onSelectChanged: (value) {
-              //               Navigator.push(
-              //                   context,
-              //                   MaterialPageRoute(
-              //                       builder: (context) =>
-              //                           const FightDetailsScreen()));
-              //             },
-              //             cells: [
-              //               DataCell(
-              //                 Text(fight.fightNumber.toString()),
-              //               ),
-              //               DataCell(
-              //                 Text(fight.startTime),
-              //               ),
-              //               DataCell(
-              //                 Text(fight.createdAt.toString()),
-              //               ),
-              //               DataCell(
-              //                 Text(fight.updatedAt.toString()),
-              //               ),
-              //             ],
-              //           ))
-              //       .toList(),
-              // ),
             ),
           );
         },
@@ -187,7 +222,7 @@ class _FightListScreen extends StatelessWidget {
       floatingActionButton: SecondaryButton(
         height: 30,
         width: 120,
-        onPressed: () => _showCreateFighterModal(context),
+        onPressed: () => _showCreateFightModal(context, FightModalType.add),
         labelText: 'Add Fight',
       ),
     );

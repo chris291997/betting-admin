@@ -30,7 +30,7 @@ class UserInput extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'userType': userType,
+      'userType': userType.isNotEmpty ? userType : 'None',
       'firstName': firstName,
       'middleName': middleName,
       'lastName': lastName,
