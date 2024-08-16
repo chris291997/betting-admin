@@ -2,7 +2,7 @@ import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class FightStartTimePicker extends StatelessWidget {
+class FightStartTimePicker extends HookWidget {
   const FightStartTimePicker({
     super.key,
     required this.onTimeChanged,

@@ -5,7 +5,7 @@ class FightRemoteSource {
 
   final NetworkManager _manager;
 
-  static const String eventPath = '/event';
+  static const String eventPath = '/events';
   static const String fightPath = '/fights';
 
   Future<FightOutput> createFight(
@@ -40,7 +40,7 @@ class FightRemoteSource {
   }
 
   Future<List<FightOutput>> getFights({required String eventId}) async {
-    final response = await _manager.post(
+    final response = await _manager.get(
       '$eventPath/$eventId$fightPath',
     );
 

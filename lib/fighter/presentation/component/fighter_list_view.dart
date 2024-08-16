@@ -58,7 +58,9 @@ class FighterListView extends StatelessWidget {
                         return null;
                       },
                     ),
-                    onSelectChanged: (value) {},
+                    onSelectChanged: (_){
+                      onFighterSelected?.call(fighter);
+                    },
                     cells: [
                       DataCell(
                         Text(fighter.name),

@@ -23,7 +23,10 @@ class FightListScreen extends StatelessWidget {
       providers: [
         BlocProvider(
             lazy: false,
-            create: (context) => FightListBloc(fightRepository, eventId)),
+            create: (context) => FightListBloc(fightRepository, eventId)
+              ..add(
+                FightListFetched(eventId),
+              )),
         BlocProvider(
           create: (context) =>
               FightUpdateOrDeleteBloc(fightRepository, eventId),
@@ -69,7 +72,7 @@ class _FightListScreen extends StatelessWidget {
                 FightUpdateOrDeleteBloc(fightRepository, eventId),
           ),
           BlocProvider.value(
-            value: BlocProvider.of<FightListBloc>(context),
+            value: BlocProvider.of<FightListBloc>(parentContext),
           ),
         ],
         child: BlocConsumer<CreateFightBloc, CreateFightState>(
@@ -191,6 +194,8 @@ class _FightListScreen extends StatelessWidget {
           }
 
           final fights = state.fights;
+
+          
 
           return Center(
             child: SizedBox(

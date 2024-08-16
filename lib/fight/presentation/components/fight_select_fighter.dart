@@ -27,7 +27,10 @@ class FightSelectFighter extends HookWidget {
             displayFighterList(
               context,
               initialSelectedFighter: initialSelectedFighter,
-              onFighterSelected: onFighterSelected,
+              onFighterSelected: (output) {
+                fighter.value = output;
+                onFighterSelected?.call(output);
+              },
             );
           },
           child: Text(fighter.value?.name ?? "Select Fighter"),
