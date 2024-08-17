@@ -63,9 +63,11 @@ class NetworkManager {
     });
 
     final accessToken = response.data['accessToken'];
+    final newRefreshToken = response.data['refreshToken'];
 
     if (accessToken != null) {
       await _cacheService.write(StorageKey.accessToken, accessToken);
+      await _cacheService.write(StorageKey.refreshToken, newRefreshToken);
     }
 
     return accessToken;
