@@ -1,5 +1,4 @@
 import 'package:bet/common/di/service_locator.dart';
-import 'package:bet/user/data/data_source/remote/user_remote_source.dart';
 import 'package:bet/user/data/di/user_service_locator.dart';
 import 'package:equatable/equatable.dart';
 

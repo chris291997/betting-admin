@@ -1,6 +1,4 @@
-import 'package:bet/common/di/service_locator.dart';
-import 'package:bet/event/data/model/input/create_event_input.dart';
-import 'package:bet/event/data/model/output/event_output.dart';
+part of '../../di/event_service_locator.dart';
 
 class EventRemoteSource {
   const EventRemoteSource(this._manager);
@@ -19,11 +17,11 @@ class EventRemoteSource {
   }
 
   Future<EventOutput> updateEvent({
-    required String id,
-    required CreateEventInput input,
+    required String eventId,
+    required UpdateEventInput input,
   }) async {
     final response = await _manager.put(
-      '$eventPath/$id',
+      '$eventPath/$eventId',
       data: input.toJson(),
     );
 

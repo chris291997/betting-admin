@@ -1,25 +1,33 @@
-import 'package:equatable/equatable.dart';
+part of '../../di/event_service_locator.dart';
 
-class UpdateEventInput extends Equatable {
+class UpdateEventInput extends EventInput {
   const UpdateEventInput({
-    required this.eventName,
-    required this.location,
-    required this.creatorId,
-    required this.eventDate,
+    required super.eventName,
+    required super.location,
+    required super.creatorId,
+    required super.eventDate,
   });
 
-  final String eventName;
-  final String location;
-  final String creatorId;
-  final DateTime eventDate;
+  const UpdateEventInput.empty()
+      : super(
+          eventName: '',
+          location: '',
+          creatorId: '',
+          eventDate: null,
+        );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'eventName': eventName,
-      'location': location,
-      'creatorId': creatorId,
-      'eventDate': eventDate.toIso8601String(),
-    };
+  UpdateEventInput copyWith({
+    String? eventName,
+    String? location,
+    String? creatorId,
+    DateTime? eventDate,
+  }) {
+    return UpdateEventInput(
+      eventName: eventName ?? this.eventName,
+      location: location ?? this.location,
+      creatorId: creatorId ?? this.creatorId,
+      eventDate: eventDate ?? this.eventDate,
+    );
   }
 
   @override

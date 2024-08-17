@@ -2,13 +2,17 @@ import 'package:bet/authentication/presentation/screen/login_screen.dart';
 import 'package:bet/common/di/service_locator.dart';
 import 'package:bet/dashboard/presentation/combonent/navigation_scaffold.dart';
 import 'package:bet/event/presentation/screen/event_screen.dart';
-import 'package:bet/fight/presentation/screen/fight_screen.dart';
-import 'package:bet/user/presentation/screen/screen.dart';
+import 'package:bet/fighter/presentation/screen/fighter_list_screen.dart';
+import 'package:bet/user/presentation/bloc/account_bloc.dart';
+import 'package:bet/user/presentation/screen/user_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _sectionNavigatorKey = GlobalKey<NavigatorState>();
+final _eventNavigatorKey = GlobalKey<NavigatorState>();
+final _fightertNavigatorKey = GlobalKey<NavigatorState>();
+final _usertNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
   initialLocation: EventScreen.routeName,
@@ -26,7 +30,7 @@ final router = GoRouter(
       },
       branches: [
         StatefulShellBranch(
-          navigatorKey: _sectionNavigatorKey,
+          navigatorKey: _eventNavigatorKey,
           routes: [
             GoRoute(
               path: EventScreen.routeName,
@@ -34,12 +38,22 @@ final router = GoRouter(
                 return const EventScreen();
               },
             ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _fightertNavigatorKey,
+          routes: [
             GoRoute(
-              path: FightScreen.routeName,
+              path: FighterListScreen.routeName,
               builder: (context, state) {
-                return const FightScreen();
+                return const FighterListScreen();
               },
             ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _usertNavigatorKey,
+          routes: [
             GoRoute(
               path: UsersScreen.routeName,
               builder: (context, state) {
@@ -52,8 +66,12 @@ final router = GoRouter(
     ),
   ],
   redirect: (context, state) async {
+    final accountBloc = context.read<AccountBloc>();
     final accessToken = await cacheService.read(StorageKey.accessToken);
+
     if (accessToken != null) {
+      accountBloc.add(AccountEventLoggedUserRequested());
+
       return null;
     }
 

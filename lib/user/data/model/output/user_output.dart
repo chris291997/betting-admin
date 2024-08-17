@@ -1,8 +1,7 @@
-import 'package:bet/common/helper/extension/json.dart';
-import 'package:equatable/equatable.dart';
+part of '../../di/user_service_locator.dart';
 
-class User extends Equatable {
-  const User({
+class UserOutput extends Equatable implements JsonSerializable {
+  const UserOutput({
     this.id = '',
     this.type = UserType.none,
     this.firstName = '',
@@ -24,7 +23,7 @@ class User extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  static const User empty = User(
+  static const UserOutput empty = UserOutput(
     id: '',
     type: UserType.pos,
     firstName: '',
@@ -34,9 +33,10 @@ class User extends Equatable {
     createdBy: '',
   );
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserOutput.fromJson(Map<String, dynamic> json) {
+    return UserOutput(
       id: json.parseString('id'),
+      type: UserType.fromString(json.parseString('userType')),
       firstName: json.parseString('firstName'),
       middleName: json.parseString('middleName'),
       lastName: json.parseString('lastName'),
@@ -47,7 +47,32 @@ class User extends Equatable {
     );
   }
 
-  User copyWith({
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'middleName': middleName,
+      'lastName': lastName,
+      'userName': username,
+      'createdBy': createdBy,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+    };
+  }
+
+  @override
+  Map<String, dynamic> toTableJson() {
+    return {
+      'userType': type.name,
+      'firstName': firstName,
+      'middleName': middleName,
+      'lastName': lastName,
+      'userName': username,
+      'createdBy': createdBy,
+    };
+  }
+
+  UserOutput copyWith({
     String? id,
     UserType? type,
     String? firstName,
@@ -58,7 +83,7 @@ class User extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return User(
+    return UserOutput(
       id: id ?? this.id,
       type: type ?? this.type,
       firstName: firstName ?? this.firstName,
@@ -70,6 +95,9 @@ class User extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  bool get isNotEmpty => this != UserOutput.empty;
+  bool get isEmpty => !isNotEmpty;
 
   @override
   List<Object?> get props => [
@@ -95,4 +123,28 @@ enum UserType {
   bool get isPos => this == UserType.pos;
 
   bool get isAdmin => this == UserType.admin;
+
+  String get value {
+    switch (this) {
+      case UserType.none:
+        return 'None';
+      case UserType.pos:
+        return 'Pos';
+      case UserType.admin:
+        return 'Admin';
+    }
+  }
+
+  static UserType fromString(String value) {
+    switch (value) {
+      case 'None':
+        return UserType.none;
+      case 'Pos':
+        return UserType.pos;
+      case 'Admin':
+        return UserType.admin;
+      default:
+        return UserType.none;
+    }
+  }
 }
