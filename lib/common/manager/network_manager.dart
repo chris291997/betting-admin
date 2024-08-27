@@ -16,18 +16,19 @@ class NetworkManager {
           }
           handler.next(options);
         },
-        onError: (error, handler) async {
-          if (error.response?.statusCode == HttpStatus.unauthorized) {
+        onResponse: (response, handler) async {
+          if (response.statusCode == HttpStatus.unauthorized) {
             final refreshToken = await _refreshToken();
             if (refreshToken != null) {
-              _httpService.options.headers['Authorization'] =
+              response.requestOptions.headers['Authorization'] =
                   'Bearer $refreshToken';
-              final newRequest = await _httpService.fetch(error.requestOptions);
+              final newRequest =
+                  await _httpService.fetch(response.requestOptions);
               return handler.resolve(newRequest); // Retry the request
             }
           }
 
-          handler.reject(error);
+          handler.next(response);
         },
       ),
     );

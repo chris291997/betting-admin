@@ -15,6 +15,7 @@ class CreatedByField extends HookWidget {
   Widget build(BuildContext context) {
     final controller = useTextEditingController(text: initialValue);
     return BaseTextfield(
+      enabled: false,
       onChanged: onCreatedByChanged,
       labelText: "Created By",
       controller: controller,

@@ -45,12 +45,19 @@ class EventOutput extends Equatable implements JsonSerializable {
 
   @override
   Map<String, dynamic> toTableJson() {
+    // convert eventDate format to MM/dd/yyyy HH:mm:ss AA
+    final eventDateFormatted = eventDate != null
+        ? DateFormat('MM/dd/yyyy hh:mm:ss aa').format(eventDate!)
+        : null;
+
     return {
       'eventName': eventName,
       'location': location,
-      'eventDate': eventDate?.toIso8601String(),
+      'eventDate': eventDateFormatted,
     };
   }
+
+  static const empty = EventOutput();
 
   @override
   List<Object?> get props => [

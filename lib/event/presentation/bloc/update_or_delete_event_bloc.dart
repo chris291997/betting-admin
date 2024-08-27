@@ -14,6 +14,7 @@ class UpdateOrDeleteEventBloc
     on<EventUpdateEventLocationAdded>(_onEventUpdateEventLocationAdded);
     on<EventDeleted>(_onEventDeleted);
     on<EventUpdateEvent>(_onEventUpdateEvent);
+    on<EventUpdateInitialized>(_onEventUpdateInitialized);
   }
 
   final EventRepository _eventRepository;
@@ -66,5 +67,19 @@ class UpdateOrDeleteEventBloc
     } catch (e) {
       emit(state.copyWith(updateStatus: UpdateOrDeleteStatus.error));
     }
+  }
+
+  void _onEventUpdateInitialized(
+      EventUpdateInitialized event, Emitter<UpdateOrDeleteState> emit) {
+    emit(
+      state.copyWith(
+        eventInput: state.eventInput.copyWith(
+          eventName: event.eventOutput.eventName,
+          location: event.eventOutput.location,
+          eventDate: event.eventOutput.eventDate,
+          creatorId: event.creatorId,
+        ),
+      ),
+    );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:bet/common/component/button/primary_button.dart';
 import 'package:bet/fight/data/di/fight_service_locator.dart';
 import 'package:bet/fight/presentation/components/fight_add_or_update_button.dart';
-import 'package:bet/fight/presentation/components/fight_number_field.dart';
 import 'package:bet/fight/presentation/components/fight_select_fighter.dart';
 import 'package:bet/fight/presentation/components/fight_start_time_picker.dart';
 import 'package:bet/fighter/data/di/fighter_service_locator.dart';
@@ -40,11 +39,6 @@ class FightModal extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FightNumberField(
-              initialValue: initialFightValue?.fightNumber.toString() ?? '',
-              onNumberChanged: onNumberChanged,
-            ),
-            const SizedBox(height: 5),
             FightStartTimePicker(
               // initialTime: initialFightValue?.startTime,
               onTimeChanged: onTimeChanged,

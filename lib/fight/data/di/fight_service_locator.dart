@@ -1,6 +1,8 @@
 import 'package:bet/common/di/service_locator.dart';
 import 'package:bet/common/abstract/json_serializable.dart';
+import 'package:bet/common/helper/extension/json.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 part '../data_source/remote/fight_remote_source.dart';
 part '../model/base_model/fight_input.dart';

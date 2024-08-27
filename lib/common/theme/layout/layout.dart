@@ -29,7 +29,7 @@ class AppLayout {
   final double mediumElevation;
   final double highElevation;
 
-  factory AppLayout.defaultLayout() {
+  static AppLayout get layout {
     return const AppLayout._(
       smallPadding: 8.0,
       mediumPadding: 16.0,

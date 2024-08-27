@@ -87,3 +87,12 @@ class UserUpdated extends UpdateOrDeleteUserEvent {
   @override
   List<Object> get props => [id];
 }
+
+class UserUpdateInitialized extends UpdateOrDeleteUserEvent {
+  const UserUpdateInitialized(this.user);
+
+  final UserOutput user;
+
+  @override
+  List<Object> get props => [user];
+}

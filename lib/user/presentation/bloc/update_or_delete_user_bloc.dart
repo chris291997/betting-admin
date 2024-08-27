@@ -19,6 +19,7 @@ class UpdateOrDeleteUserBloc
     on<UserUpdateEventCreatedByAdded>(_onUserUpdateEventCreatedByAdded);
     on<UserUpdated>(_onUserUpdated);
     on<UserDeleted>(_onUserDeleteEvent);
+    on<UserUpdateInitialized>(_onUserUpdateInitialized);
   }
 
   final UserRepository _userRepository;
@@ -104,5 +105,21 @@ class UpdateOrDeleteUserBloc
     } catch (e) {
       emit(state.copyWith(deleteStatus: UpdateOrDeleteUserStatus.error));
     }
+  }
+
+  void _onUserUpdateInitialized(
+      UserUpdateInitialized event, Emitter<UpdateOrDeleteUserState> emit) {
+    emit(
+      state.copyWith(
+        updateUserInput: UpdateUserInput(
+          userType: event.user.type.name,
+          firstName: event.user.firstName,
+          middleName: event.user.middleName,
+          lastName: event.user.lastName,
+          userName: event.user.username,
+          createdBy: event.user.createdBy,
+        ),
+      ),
+    );
   }
 }

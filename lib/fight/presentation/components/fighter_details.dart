@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 class FighterDetails extends StatelessWidget {
   const FighterDetails({
     super.key,
+    required this.id,
   });
+
+  final String id;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        Text('Meron'),
+        Text('Meron: $id'),
         SizedBox(height: 30),
         Text('Name'),
         SizedBox(height: 10),

@@ -5,6 +5,7 @@ import 'package:bet/user/data/di/user_service_locator.dart';
 import 'package:bet/user/presentation/bloc/create_user_bloc.dart';
 import 'package:bet/user/presentation/bloc/update_or_delete_user_bloc.dart';
 import 'package:bet/user/presentation/bloc/user_list_bloc.dart';
+import 'package:bet/user/presentation/component/delete_user_modal.dart';
 import 'package:bet/user/presentation/component/user_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,9 +76,18 @@ class _UsersScreen extends StatelessWidget {
                 columns: _columns,
                 objects: users,
                 onSelectChanged: (_) => {},
-                onDelete: (user) {
-                  BlocProvider.of<UpdateOrDeleteUserBloc>(context)
-                      .add(UserDeleted(user.id));
+                onDelete: (user) async {
+                  await showDialog(
+                    context: context,
+                    builder: (_) => BlocProvider<UpdateOrDeleteUserBloc>.value(
+                      value: BlocProvider.of<UpdateOrDeleteUserBloc>(
+                        context,
+                      ),
+                      child: DeleteUserModal(
+                        userId: user.id,
+                      ),
+                    ),
+                  );
                 },
                 onUpdate: (user) {
                   BlocProvider.of<UpdateOrDeleteUserBloc>(context).add(
@@ -122,7 +132,12 @@ class _UsersScreen extends StatelessWidget {
             create: (context) => CreateUserBloc(userRepository),
           ),
           BlocProvider(
-            create: (context) => UpdateOrDeleteUserBloc(userRepository),
+            create: (context) => UpdateOrDeleteUserBloc(userRepository)
+              ..add(
+                UserUpdateInitialized(
+                  initialUserValue ?? UserOutput.empty,
+                ),
+              ),
           ),
           BlocProvider.value(
             value: BlocProvider.of<UserListBloc>(parentContext),
@@ -131,8 +146,7 @@ class _UsersScreen extends StatelessWidget {
         child: BlocConsumer<CreateUserBloc, CreateUserState>(
           listener: (context, state) {
             if (state.status.isSuccess) {
-              BlocProvider.of<UserListBloc>(parentContext)
-                  .add(UserListFetched());
+              context.read<UserListBloc>().add(UserListFetched());
               Navigator.pop(context);
             }
           },
@@ -141,8 +155,7 @@ class _UsersScreen extends StatelessWidget {
                 UpdateOrDeleteUserState>(
               listener: (context, state) {
                 if (state.updateStatus.isSuccess) {
-                  BlocProvider.of<UserListBloc>(parentContext)
-                      .add(UserListFetched());
+                  context.read<UserListBloc>().add(UserListFetched());
                   Navigator.pop(context);
                 }
               },
@@ -156,67 +169,77 @@ class _UsersScreen extends StatelessWidget {
                       : PrimaryButtonState.enabled,
                   onRoleChanged: (role) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateUserBloc>(context)
+                      context
+                          .read<CreateUserBloc>()
                           .add(UserCreateEventUserTypeAdded(role));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteUserBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteUserBloc>()
                           .add(UserUpdateEventUserTypeAdded(role));
                     }
                   },
                   onFirstNameChanged: (value) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateUserBloc>(context)
+                      context
+                          .read<CreateUserBloc>()
                           .add(UserCreateEventFirstNameAdded(value));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteUserBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteUserBloc>()
                           .add(UserUpdateEventFirstNameAdded(value));
                     }
                   },
                   onMiddleNameChanged: (value) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateUserBloc>(context)
+                      context
+                          .read<CreateUserBloc>()
                           .add(UserCreateEventMiddleNameAdded(value));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteUserBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteUserBloc>()
                           .add(UserUpdateEventMiddleNameAdded(value));
                     }
                   },
                   onLastNameChanged: (value) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateUserBloc>(context)
+                      context
+                          .read<CreateUserBloc>()
                           .add(UserCreateEventLastNameAdded(value));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteUserBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteUserBloc>()
                           .add(UserUpdateEventLastNameAdded(value));
                     }
                   },
                   onUsernameChanged: (value) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateUserBloc>(context)
+                      context
+                          .read<CreateUserBloc>()
                           .add(UserCreateEventUserNameAdded(value));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteUserBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteUserBloc>()
                           .add(UserUpdateEventUserNameAdded(value));
                     }
                   },
                   onCreatedByChanged: (value) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateUserBloc>(context)
+                      context
+                          .read<CreateUserBloc>()
                           .add(UserCreateEventCreatedByAdded(value));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteUserBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteUserBloc>()
                           .add(UserUpdateEventCreatedByAdded(value));
                     }
                   },
                   createOrUpdateButtonOnPressed: () {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateUserBloc>(context)
-                          .add(UserCreated());
+                      context.read<CreateUserBloc>().add(UserCreated());
                     } else {
-                      BlocProvider.of<UpdateOrDeleteUserBloc>(parentContext)
-                          .add(UserUpdated(
-                        initialUserValue?.id ?? '',
-                      ));
+                      context.read<UpdateOrDeleteUserBloc>().add(UserUpdated(
+                            initialUserValue?.id ?? '',
+                          ));
                     }
                   },
                 );

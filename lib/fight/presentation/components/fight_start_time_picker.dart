@@ -40,7 +40,7 @@ class FightStartTimePicker extends HookWidget {
             );
           },
           child: Text(currentSelectedTime.value != null
-              ? currentSelectedTime.value.toString()
+              ? '${currentSelectedTime.value?.hour}:${currentSelectedTime.value?.minute} ${currentSelectedTime.value?.period.name}'
               : "Select Time"),
         ),
       ],

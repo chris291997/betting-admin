@@ -60,3 +60,12 @@ class FightUpdateEvent extends FightUpdateOrDeleteEvent {
   @override
   List<Object> get props => [id];
 }
+
+class FightUpdateInitialized extends FightUpdateOrDeleteEvent {
+  const FightUpdateInitialized(this.fight);
+
+  final FightOutput fight;
+
+  @override
+  List<Object> get props => [fight];
+}

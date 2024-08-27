@@ -69,7 +69,12 @@ class _FightListScreen extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                FightUpdateOrDeleteBloc(fightRepository, eventId),
+                FightUpdateOrDeleteBloc(fightRepository, eventId)
+                  ..add(
+                    FightUpdateInitialized(
+                      fight ?? const FightOutput(),
+                    ),
+                  ),
           ),
           BlocProvider.value(
             value: BlocProvider.of<FightListBloc>(parentContext),
@@ -78,8 +83,7 @@ class _FightListScreen extends StatelessWidget {
         child: BlocConsumer<CreateFightBloc, CreateFightState>(
           listener: (context, state) {
             if (state.status.isSuccess) {
-              BlocProvider.of<FightListBloc>(parentContext)
-                  .add(FightListFetched(eventId));
+              context.read<FightListBloc>().add(FightListFetched(eventId));
 
               Navigator.pop(context);
             }
@@ -89,8 +93,7 @@ class _FightListScreen extends StatelessWidget {
                 FightUpdateOrDeleteState>(
               listener: (context, state) {
                 if (state.updateStatus.isSuccess) {
-                  BlocProvider.of<FightListBloc>(parentContext)
-                      .add(FightListFetched(eventId));
+                  context.read<FightListBloc>().add(FightListFetched(eventId));
                   Navigator.pop(context);
                 }
               },
@@ -106,63 +109,67 @@ class _FightListScreen extends StatelessWidget {
                     final fightNumber = int.tryParse(value);
                     if (fightNumber != null) {
                       if (modalType.isAdd) {
-                        BlocProvider.of<CreateFightBloc>(context).add(
-                          FightCreateEventFightNumAdded(fightNumber),
-                        );
+                        context.read<CreateFightBloc>().add(
+                              FightCreateEventFightNumAdded(fightNumber),
+                            );
                       } else {
-                        BlocProvider.of<FightUpdateOrDeleteBloc>(context).add(
-                          FightUpdateEventFightNumAdded(fightNumber),
-                        );
+                        context.read<FightUpdateOrDeleteBloc>().add(
+                              FightUpdateEventFightNumAdded(fightNumber),
+                            );
                       }
                     }
                   },
                   onTimeChanged: (startTime) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateFightBloc>(context).add(
-                        FightCreateEventStartTimeAdded(startTime.toString()),
-                      );
+                      context.read<CreateFightBloc>().add(
+                            FightCreateEventStartTimeAdded(
+                              '${startTime.hour}:${startTime.minute} ${startTime.period.name}',
+                            ),
+                          );
                     } else {
-                      BlocProvider.of<FightUpdateOrDeleteBloc>(context).add(
-                        FightUpdateEventStartTimeAdded(startTime.toString()),
-                      );
+                      context.read<FightUpdateOrDeleteBloc>().add(
+                            FightUpdateEventStartTimeAdded(
+                              '${startTime.hour}:${startTime.minute} ${startTime.period.name}',
+                            ),
+                          );
                     }
                   },
                   onMeronSelected: (fighter) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateFightBloc>(context).add(
-                        FightCreateEventMeronAdded(
-                          fighter.id,
-                        ),
-                      );
+                      context.read<CreateFightBloc>().add(
+                            FightCreateEventMeronAdded(
+                              fighter.id,
+                            ),
+                          );
                     } else {
-                      BlocProvider.of<FightUpdateOrDeleteBloc>(context).add(
-                        FightUpdateEventMeronAdded(
-                          fighter.id,
-                        ),
-                      );
+                      context.read<FightUpdateOrDeleteBloc>().add(
+                            FightUpdateEventMeronAdded(
+                              fighter.id,
+                            ),
+                          );
                     }
                   },
                   onWalaSelected: (fighter) {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateFightBloc>(context).add(
-                        FightCreateEventWalaAdded(
-                          fighter.id,
-                        ),
-                      );
+                      context.read<CreateFightBloc>().add(
+                            FightCreateEventWalaAdded(
+                              fighter.id,
+                            ),
+                          );
                     } else {
-                      BlocProvider.of<FightUpdateOrDeleteBloc>(context).add(
-                        FightUpdateEventWalaAdded(
-                          fighter.id,
-                        ),
-                      );
+                      context.read<FightUpdateOrDeleteBloc>().add(
+                            FightUpdateEventWalaAdded(
+                              fighter.id,
+                            ),
+                          );
                     }
                   },
                   createOrUpdateFightSubmitted: () {
                     if (modalType.isAdd) {
-                      BlocProvider.of<CreateFightBloc>(context)
-                          .add(FightCreated());
+                      context.read<CreateFightBloc>().add(FightCreated());
                     } else {
-                      BlocProvider.of<FightUpdateOrDeleteBloc>(context)
+                      context
+                          .read<FightUpdateOrDeleteBloc>()
                           .add(FightUpdateEvent(fight?.id ?? ''));
                     }
                   },
@@ -195,8 +202,6 @@ class _FightListScreen extends StatelessWidget {
 
           final fights = state.fights;
 
-          
-
           return Center(
             child: SizedBox(
               width: 1000,
@@ -207,7 +212,7 @@ class _FightListScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const FightDetailsScreen(),
+                      builder: (context) => FightDetailsScreen(fight: fight),
                     ),
                   );
                 },

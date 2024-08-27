@@ -1,6 +1,9 @@
+import 'package:bet/common/theme/theme.dart';
 import 'package:bet/dashboard/presentation/combonent/side_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import 'bottom_navigation_bar.dart';
 
 class NavigationScaffold extends StatelessWidget {
   const NavigationScaffold({
@@ -13,9 +16,13 @@ class NavigationScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: context.isMobileDevice
+          ? CustomBottomNavigationBar(navigationShell: navigationShell)
+          : null,
       body: Row(
         children: [
-          SideNavigationBar(navigationShell: navigationShell),
+          if (!context.isMobileDevice)
+            SideNavigationBar(navigationShell: navigationShell),
           Expanded(child: navigationShell),
         ],
       ),

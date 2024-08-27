@@ -18,20 +18,18 @@ class FightRemoteSource {
     return FightOutput.fromJson(response.data);
   }
 
-  Future<FightOutput> deleteFight(
+  Future<void> deleteFight(
       {required String eventId, required String fightId}) async {
     final response = await _manager.delete(
       '$eventPath/$eventId$fightPath/$fightId',
     );
-
-    return FightOutput.fromJson(response.data);
   }
 
   Future<FightOutput> updateFight(
       {required String eventId,
       required String fightId,
       required UpdateFightInput input}) async {
-    final response = await _manager.post(
+    final response = await _manager.patch(
       '$eventPath/$eventId$fightPath/$fightId',
       data: input.toJson(),
     );
@@ -49,5 +47,71 @@ class FightRemoteSource {
     return data
         .map((json) => FightOutput.fromJson(json as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<FightOutput> getFightById({
+    required String eventId,
+    required String fightId,
+  }) async {
+    final response = await _manager.get(
+      '$eventPath/$eventId$fightPath/$fightId',
+    );
+
+    return FightOutput.fromJson(response.data);
+  }
+
+  Future<void> startFight({
+    required String eventId,
+    required String fightId,
+  }) async {
+    final response = await _manager.patch(
+      '$eventPath/$eventId$fightPath/$fightId/start',
+    );
+  }
+
+  Future<void> concludeFight({
+    required String eventId,
+    required String fightId,
+    required String winnerId,
+  }) async {
+    final response = await _manager.patch(
+      '$eventPath/$eventId$fightPath/$fightId/conclude/$winnerId',
+    );
+  }
+
+  Future<void> drawFight({
+    required String eventId,
+    required String fightId,
+  }) async {
+    final response = await _manager.patch(
+      '$eventPath/$eventId$fightPath/$fightId/draw',
+    );
+  }
+
+  Future<void> cancelFight({
+    required String eventId,
+    required String fightId,
+  }) async {
+    final response = await _manager.patch(
+      '$eventPath/$eventId$fightPath/$fightId/cancel',
+    );
+  }
+
+  Future<void> closeBets({
+    required String eventId,
+    required String fightId,
+  }) async {
+    final response = await _manager.patch(
+      '$eventPath/$eventId$fightPath/$fightId/close-bets',
+    );
+  }
+
+  Future<void> openBets({
+    required String eventId,
+    required String fightId,
+  }) async {
+    final response = await _manager.patch(
+      '$eventPath/$eventId$fightPath/$fightId/open-bets',
+    );
   }
 }

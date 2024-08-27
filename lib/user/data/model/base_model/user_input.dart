@@ -30,7 +30,10 @@ class UserInput extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'userType': userType.isNotEmpty ? userType : 'None',
+      // convert userType to pascal case
+      'userType': userType.isNotEmpty
+          ? userType[0].toUpperCase() + userType.substring(1)
+          : userType,
       'firstName': firstName,
       'middleName': middleName,
       'lastName': lastName,

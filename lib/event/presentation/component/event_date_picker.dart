@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:intl/intl.dart';
 
 class EventDatePicker extends HookWidget {
   const EventDatePicker({
@@ -13,6 +14,9 @@ class EventDatePicker extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final date = useState(initialDate);
+
+    final dateTimeFormat =
+        DateFormat('yyyy-MM-dd').format(date.value ?? DateTime.now());
 
     return Row(
       children: [
@@ -33,8 +37,7 @@ class EventDatePicker extends HookWidget {
               date.value = selectedDate;
             }
           },
-          child:
-              Text(date.value == null ? "Select Date" : date.value.toString()),
+          child: Text(date.value == null ? "Select Date" : dateTimeFormat),
         ),
       ],
     );

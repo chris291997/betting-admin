@@ -5,6 +5,7 @@ import 'package:bet/event/data/di/event_service_locator.dart';
 import 'package:bet/event/presentation/bloc/create_event_bloc.dart';
 import 'package:bet/event/presentation/bloc/event_list_bloc.dart';
 import 'package:bet/event/presentation/bloc/update_or_delete_event_bloc.dart';
+import 'package:bet/event/presentation/component/delete_event_modal.dart';
 import 'package:bet/event/presentation/component/event_modal.dart';
 import 'package:bet/fight/presentation/screen/fight_list_screen.dart';
 import 'package:bet/user/presentation/bloc/account_bloc.dart';
@@ -14,7 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class EventScreen extends StatelessWidget {
   const EventScreen({super.key});
 
-  static const String routeName = "/events";
+  static const String routeName = "/";
 
   @override
   Widget build(BuildContext context) {
@@ -49,57 +50,83 @@ class _EventScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Events')),
-      body: BlocBuilder<EventListBloc, EventListState>(
-        builder: (context, state) {
-          if (state.status.isError) {
-            return const Center(child: Text('Failed to fetch events'));
+      body: BlocListener<UpdateOrDeleteEventBloc, UpdateOrDeleteState>(
+        listener: (context, state) {
+          if (state.deleteStatus.isSuccess || state.updateStatus.isSuccess) {
+            BlocProvider.of<EventListBloc>(context)
+                .add(EventListEventFetched());
           }
+        },
+        child: BlocBuilder<EventListBloc, EventListState>(
+          builder: (context, state) {
+            if (state.status.isError) {
+              return const Center(child: Text('Failed to fetch events'));
+            }
 
-          if (state.status.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+            if (state.status.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (state.status.isInitial) {
-            return const SizedBox();
-          }
+            if (state.status.isInitial) {
+              return const SizedBox();
+            }
 
-          final events = state.events;
+            final events = state.events;
 
-          return Center(
-            child: SizedBox(
-              width: 1000,
-              child: CustomDataTable<EventOutput>(
-                  columns: _columns,
-                  objects: events,
-                  onSelectChanged: (event) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FightListScreen(
+            if (events.isEmpty) {
+              return const Center(child: Text('No events found'));
+            }
+
+            return BlocBuilder<AccountBloc, AccountState>(
+                builder: (context, state) {
+              return Center(
+                child: SizedBox(
+                  width: 1000,
+                  child: CustomDataTable<EventOutput>(
+                    columns: _columns,
+                    objects: events,
+                    onSelectChanged: (event) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FightListScreen(
+                            eventId: event.id,
+                          ),
+                        ),
+                      );
+                    },
+                    onDelete: (event) => showDialog(
+                      context: context,
+                      builder: (_) =>
+                          BlocProvider<UpdateOrDeleteEventBloc>.value(
+                        value: BlocProvider.of<UpdateOrDeleteEventBloc>(
+                          context,
+                        ),
+                        child: DeleteEventModal(
                           eventId: event.id,
                         ),
                       ),
-                    );
-                  },
-                  onDelete: (event) =>
-                      BlocProvider.of<UpdateOrDeleteEventBloc>(context)
-                          .add(EventDeleted(event.id)),
-                  onUpdate: (event) {
-                    _showEventModal(
-                      context,
-                      EventModalType.edit,
-                      initialEventValue: event,
-                    );
-                  }),
-            ),
-          );
-        },
+                    ),
+                    onUpdate: (event) {
+                      _showEventModal(
+                        context,
+                        EventModalType.edit,
+                        initialEventValue: event,
+                        creatorId: state.userOutput.id,
+                      );
+                    },
+                  ),
+                ),
+              );
+            });
+          },
+        ),
       ),
       floatingActionButton: SecondaryButton(
         height: 30,
         width: 120,
         onPressed: () => _showEventModal(context, EventModalType.add),
-        labelText: 'Add Fight',
+        labelText: 'Add Event',
       ),
     );
   }
@@ -108,6 +135,7 @@ class _EventScreen extends StatelessWidget {
     BuildContext parentContext,
     EventModalType modalType, {
     EventOutput? initialEventValue,
+    String? creatorId,
   }) {
     showDialog(
       context: parentContext,
@@ -117,7 +145,13 @@ class _EventScreen extends StatelessWidget {
             create: (context) => CreateEventBloc(eventRepository),
           ),
           BlocProvider(
-            create: (context) => UpdateOrDeleteEventBloc(eventRepository),
+            create: (context) => UpdateOrDeleteEventBloc(eventRepository)
+              ..add(
+                EventUpdateInitialized(
+                  creatorId ?? '',
+                  initialEventValue ?? EventOutput.empty,
+                ),
+              ),
           ),
           BlocProvider.value(
             value: BlocProvider.of<AccountBloc>(context),
@@ -150,28 +184,34 @@ class _EventScreen extends StatelessWidget {
                       : PrimaryButtonState.enabled,
                   onEventNameChanged: (value) {
                     if (modalType.isCreate) {
-                      BlocProvider.of<CreateEventBloc>(context)
+                      context
+                          .read<CreateEventBloc>()
                           .add(EventCreateEventNameAdded(value));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteEventBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteEventBloc>()
                           .add(EventUpdateEventNameAdded(value));
                     }
                   },
                   onLocationChanged: (value) {
                     if (modalType.isCreate) {
-                      BlocProvider.of<CreateEventBloc>(context)
+                      context
+                          .read<CreateEventBloc>()
                           .add(EventCreateEventLocationAdded(value));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteEventBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteEventBloc>()
                           .add(EventUpdateEventLocationAdded(value));
                     }
                   },
                   onDateChanged: (value) {
                     if (modalType.isCreate) {
-                      BlocProvider.of<CreateEventBloc>(context)
+                      context
+                          .read<CreateEventBloc>()
                           .add(EventCreateEventDateAdded(value));
                     } else {
-                      BlocProvider.of<UpdateOrDeleteEventBloc>(parentContext)
+                      context
+                          .read<UpdateOrDeleteEventBloc>()
                           .add(EventUpdateEventDateAdded(value));
                     }
                   },
@@ -182,21 +222,20 @@ class _EventScreen extends StatelessWidget {
                           .userOutput
                           .id;
 
-                      BlocProvider.of<CreateEventBloc>(context).add(
-                        EventCreatedEventCreatorAdded(
-                          creatorId,
-                        ),
-                      );
+                      context.read<CreateEventBloc>().add(
+                            EventCreatedEventCreatorAdded(
+                              creatorId,
+                            ),
+                          );
 
                       BlocProvider.of<CreateEventBloc>(context)
                           .add(EventCreated());
                     } else {
-                      BlocProvider.of<UpdateOrDeleteEventBloc>(parentContext)
-                          .add(
-                        EventUpdateEvent(
-                          initialEventValue?.id ?? '',
-                        ),
-                      );
+                      context.read<UpdateOrDeleteEventBloc>().add(
+                            EventUpdateEvent(
+                              initialEventValue?.id ?? '',
+                            ),
+                          );
                     }
                   },
                 );

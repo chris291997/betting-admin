@@ -51,3 +51,13 @@ class EventUpdateEvent extends EventUpdateOrDeleteEvent {
   @override
   List<Object> get props => [id];
 }
+
+class EventUpdateInitialized extends EventUpdateOrDeleteEvent {
+  const EventUpdateInitialized(this.creatorId, this.eventOutput);
+
+  final String creatorId;
+  final EventOutput eventOutput;
+
+  @override
+  List<Object> get props => [eventOutput];
+}

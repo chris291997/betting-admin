@@ -22,27 +22,17 @@ class LoginButton extends StatelessWidget {
               context
                   .read<AccountBloc>()
                   .add(AccountEventLoggedUserRequested());
+
+              context.go(EventScreen.routeName);
             } else if (state.status.isError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
                     'Login failed',
-                    style: context.textStyle.caption.copyWith(
-                      color: context.colors.onError,
-                    ),
+                    style: context.textStyle.caption,
                   ),
-                  backgroundColor: context.colors.error,
                 ),
               );
-              context.go(EventScreen.routeName);
-            }
-          },
-        ),
-        BlocListener<AccountBloc, AccountState>(
-          listenWhen: (previous, current) =>
-              previous.userOutput != current.userOutput,
-          listener: (context, state) {
-            if (state.userOutput.isNotEmpty) {
               context.go(EventScreen.routeName);
             }
           },

@@ -24,7 +24,6 @@ class FightInput extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'fightNumber': fightNumber,
       'meronId': meronId,
       'walaId': walaId,
       'startTime': startTime,

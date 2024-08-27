@@ -1,69 +1,54 @@
 part of '../theme.dart';
 
 class AppColors {
-  const AppColors._({
-    required this.primary,
-    required this.secondary,
-    required this.tertiary,
-    required this.background,
-    required this.surface,
-    required this.error,
-    required this.onPrimary,
-    required this.onSecondary,
-    required this.onTertiary,
-    required this.onBackground,
-    required this.onSurface,
-    required this.onError,
-  });
-
-  /// A primary color is the color displayed most frequently across your app's screens and components.
-  final Color primary;
-
-  /// A secondary color provides more ways to accent and distinguish your product. Having a secondary color is optional, and should be applied sparingly to accent select parts of your UI.
-  ///
-  /// If you don’t have a secondary color, your primary color can also be used to accent elements.
-  ///
-  /// Secondary colors are best for:
-  ///
-  /// Floating action buttons
-  /// Selection controls, like sliders and switches
-  /// Highlighting selected text
-  /// Progress bars
-  /// Links and headlines
-  final Color secondary;
-
-  /// A tertiary color provides more ways to accent and distinguish your product. Having a tertiary color is optional, and should be applied sparingly to accent select parts of your UI.
-  final Color tertiary;
-
-  /// The background color appears behind scrollable content. The baseline background and surface color is #FFFFFF.
-  final Color background;
-
-  /// Surface colors affect surfaces of components, such as cards, sheets, and menus.
-  final Color surface;
-
-  /// Error colors indicate errors in components, such as text fields. It should be used sparingly to not overwhelm users.
-  final Color error;
-  final Color onPrimary;
-  final Color onSecondary;
-  final Color onTertiary;
-  final Color onBackground;
-  final Color onSurface;
-  final Color onError;
-
-  factory AppColors.dark() {
-    return const AppColors._(
-      primary: Color(0xFF4b39ef),
-      secondary: Color(0xFF000000),
-      tertiary: Color(0xFF000000),
-      background: Color(0xFFF1F4F8),
-      surface: Color(0xFF1E1E1E),
-      error: Color(0xFFCF6679),
-      onPrimary: Color(0xFFFFFFFF),
-      onSecondary: Color(0xFFFFFFFF),
-      onTertiary: Color(0xFFFFFFFF),
-      onBackground: Color(0xFF57636C),
-      onSurface: Color(0xFFFFFFFF),
-      onError: Color(0xFF000000),
+  static ColorScheme get scheme {
+    return const ColorScheme(
+      brightness: Brightness.light,
+      primary: Color(0xff23184f),
+      surfaceTint: Color(0xff615690),
+      onPrimary: Color(0xffffffff),
+      primaryContainer: Color(0xff453b72),
+      onPrimaryContainer: Color(0xffffffff),
+      secondary: Color(0xff3b103b),
+      onSecondary: Color(0xffffffff),
+      secondaryContainer: Color(0xff60325e),
+      onSecondaryContainer: Color(0xffffffff),
+      tertiary: Color(0xff23194f),
+      onTertiary: Color(0xffffffff),
+      tertiaryContainer: Color(0xff453b72),
+      onTertiaryContainer: Color(0xffffffff),
+      error: Color(0xff4e0002),
+      onError: Color(0xffffffff),
+      errorContainer: Color(0xff8c0009),
+      onErrorContainer: Color(0xffffffff),
+      surface: Color(0xfffdf8ff),
+      onSurface: Color(0xff000000),
+      onSurfaceVariant: Color(0xff25232b),
+      outline: Color(0xff44414a),
+      outlineVariant: Color(0xff44414a),
+      shadow: Color(0xff000000),
+      scrim: Color(0xff000000),
+      inverseSurface: Color(0xff312f36),
+      inversePrimary: Color(0xfff0e9ff),
+      primaryFixed: Color(0xff453b72),
+      onPrimaryFixed: Color(0xffffffff),
+      primaryFixedDim: Color(0xff2e245a),
+      onPrimaryFixedVariant: Color(0xffffffff),
+      secondaryFixed: Color(0xff60325e),
+      onSecondaryFixed: Color(0xffffffff),
+      secondaryFixedDim: Color(0xff471b46),
+      onSecondaryFixedVariant: Color(0xffffffff),
+      tertiaryFixed: Color(0xff453b72),
+      onTertiaryFixed: Color(0xffffffff),
+      tertiaryFixedDim: Color(0xff2e245b),
+      onTertiaryFixedVariant: Color(0xffffffff),
+      surfaceDim: Color(0xffddd8e0),
+      surfaceBright: Color(0xfffdf8ff),
+      surfaceContainerLowest: Color(0xffffffff),
+      surfaceContainerLow: Color(0xfff7f2fa),
+      surfaceContainer: Color(0xfff1ecf4),
+      surfaceContainerHigh: Color(0xffebe6ee),
+      surfaceContainerHighest: Color(0xffe6e1e9),
     );
   }
 }

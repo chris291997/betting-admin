@@ -8,12 +8,14 @@ import 'package:bet/user/presentation/screen/user_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _eventNavigatorKey = GlobalKey<NavigatorState>();
 final _fightertNavigatorKey = GlobalKey<NavigatorState>();
 final _usertNavigatorKey = GlobalKey<NavigatorState>();
 
+// no navigation animation
 final router = GoRouter(
   initialLocation: EventScreen.routeName,
   navigatorKey: _rootNavigatorKey,
@@ -34,8 +36,8 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: EventScreen.routeName,
-              builder: (context, state) {
-                return const EventScreen();
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: EventScreen());
               },
             ),
           ],
@@ -45,8 +47,8 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: FighterListScreen.routeName,
-              builder: (context, state) {
-                return const FighterListScreen();
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: FighterListScreen());
               },
             ),
           ],
@@ -56,8 +58,8 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: UsersScreen.routeName,
-              builder: (context, state) {
-                return const UsersScreen();
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(child: UsersScreen());
               },
             ),
           ],
@@ -70,11 +72,15 @@ final router = GoRouter(
     final accessToken = await cacheService.read(StorageKey.accessToken);
 
     if (accessToken != null) {
-      accountBloc.add(AccountEventLoggedUserRequested());
+      if (!JwtDecoder.isExpired(accessToken)) {
+        accountBloc.add(AccountEventLoggedUserRequested());
 
-      return null;
+        return null;
+      }
     }
 
+    await cacheService.remove(StorageKey.accessToken);
+    await cacheService.remove(StorageKey.refreshToken);
     return LoginScreen.routeName;
   },
 );

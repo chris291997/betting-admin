@@ -17,6 +17,7 @@ class FightUpdateOrDeleteBloc
     on<FightUpdateEventStartTimeAdded>(_onFightUpdateEventStartTimeAdded);
     on<FightDeleted>(_onFightDeleted);
     on<FightUpdateEvent>(_onFightUpdateEvent);
+    on<FightUpdateInitialized>(_onFightUpdateInitialized);
   }
 
   final String eventId;
@@ -84,5 +85,19 @@ class FightUpdateOrDeleteBloc
     } catch (e) {
       emit(state.copyWith(updateStatus: FightUpdateOrDeleteStatus.error));
     }
+  }
+
+  void _onFightUpdateInitialized(
+      FightUpdateInitialized event, Emitter<FightUpdateOrDeleteState> emit) {
+    emit(
+      state.copyWith(
+        updateFightInput: UpdateFightInput(
+          fightNumber: event.fight.fightNumber,
+          meronId: event.fight.meronId,
+          walaId: event.fight.walaId,
+          startTime: event.fight.startTime,
+        ),
+      ),
+    );
   }
 }

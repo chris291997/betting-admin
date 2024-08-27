@@ -15,7 +15,6 @@ class LoginImage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(context.layout.largeRadius),
-          color: context.colors.surface,
           image: const DecorationImage(
             image: AssetImage(AppImage.cockfight),
             fit: BoxFit.cover,

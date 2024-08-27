@@ -20,7 +20,7 @@ class EventRemoteSource {
     required String eventId,
     required UpdateEventInput input,
   }) async {
-    final response = await _manager.put(
+    final response = await _manager.patch(
       '$eventPath/$eventId',
       data: input.toJson(),
     );
