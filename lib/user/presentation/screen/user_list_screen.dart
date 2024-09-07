@@ -1,5 +1,4 @@
 import 'package:bet/common/component/button/primary_button.dart';
-import 'package:bet/common/component/button/secondary_button.dart';
 import 'package:bet/common/component/table/custom_data_table.dart';
 import 'package:bet/user/data/di/user_service_locator.dart';
 import 'package:bet/user/presentation/bloc/create_user_bloc.dart';
@@ -53,68 +52,95 @@ class _UsersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Users')),
-      body: BlocBuilder<UserListBloc, UserListState>(
-        builder: (context, state) {
-          if (state.status.isError) {
-            return const Center(child: Text('Failed to fetch events'));
-          }
-
-          if (state.status.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state.status.isInitial) {
-            return const SizedBox();
-          }
-
-          final users = state.users;
-
-          return Center(
-            child: SizedBox(
-              width: 1000,
-              child: CustomDataTable<UserOutput>(
-                columns: _columns,
-                objects: users,
-                onSelectChanged: (_) => {},
-                onDelete: (user) async {
-                  await showDialog(
-                    context: context,
-                    builder: (_) => BlocProvider<UpdateOrDeleteUserBloc>.value(
-                      value: BlocProvider.of<UpdateOrDeleteUserBloc>(
-                        context,
-                      ),
-                      child: DeleteUserModal(
-                        userId: user.id,
-                      ),
-                    ),
-                  );
-                },
-                onUpdate: (user) {
-                  BlocProvider.of<UpdateOrDeleteUserBloc>(context).add(
-                    UserUpdateEventUserInitialValueAdded(
-                      UpdateUserInput(
-                        firstName: user.firstName,
-                        middleName: user.middleName,
-                        lastName: user.lastName,
-                        userName: user.username,
-                        userType: user.type.name,
-                        createdBy: user.createdBy,
-                      ),
-                    ),
-                  );
-                  _showEventModal(context, UserModalType.edit,
-                      initialUserValue: user);
-                },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<UpdateOrDeleteUserBloc, UpdateOrDeleteUserState>(
+            listener: (context, state) {
+              if (state.deleteStatus.isSuccess) {
+                context.read<UserListBloc>().add(UserListFetched());
+              }
+            },
+          ),
+        ],
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      context.read<UserListBloc>().add(UserListFetched());
+                    },
+                    icon: const Icon(Icons.refresh),
+                  ),
+                  // Add
+                  IconButton(
+                    onPressed: () {
+                      _showEventModal(context, UserModalType.add);
+                    },
+                    icon: const Icon(Icons.add),
+                  ),
+                ],
               ),
-            ),
-          );
-        },
-      ),
-      floatingActionButton: SecondaryButton(
-        height: 30,
-        width: 120,
-        onPressed: () => _showEventModal(context, UserModalType.add),
-        labelText: 'Add User',
+              Expanded(
+                child: BlocBuilder<UserListBloc, UserListState>(
+                  builder: (context, state) {
+                    if (state.status.isError) {
+                      return const Center(
+                          child: Text('Failed to fetch events'));
+                    }
+
+                    if (state.status.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (state.status.isInitial) {
+                      return const SizedBox();
+                    }
+
+                    final users = state.users;
+
+                    return CustomDataTable<UserOutput>(
+                      columns: _columns,
+                      objects: users,
+                      onSelectChanged: (_) => {},
+                      onDelete: (user) async {
+                        await showDialog(
+                          context: context,
+                          builder: (_) =>
+                              BlocProvider<UpdateOrDeleteUserBloc>.value(
+                            value: context.read<UpdateOrDeleteUserBloc>(),
+                            child: DeleteUserModal(
+                              userId: user.id,
+                            ),
+                          ),
+                        );
+                      },
+                      onUpdate: (user) {
+                        BlocProvider.of<UpdateOrDeleteUserBloc>(context).add(
+                          UserUpdateEventUserInitialValueAdded(
+                            UpdateUserInput(
+                              firstName: user.firstName,
+                              middleName: user.middleName,
+                              lastName: user.lastName,
+                              userName: user.username,
+                              userType: user.type.name,
+                              createdBy: user.createdBy,
+                            ),
+                          ),
+                        );
+                        _showEventModal(context, UserModalType.edit,
+                            initialUserValue: user);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

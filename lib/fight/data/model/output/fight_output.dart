@@ -69,6 +69,10 @@ class FightOutput extends Equatable implements JsonSerializable {
 
   @override
   Map<String, dynamic> toTableJson() {
+    final startTime = DateFormat('MM/dd/yyyy hh:mm:ss aa').format(
+      DateTime.parse(this.startTime),
+    );
+
     final createdAtFormat = DateFormat('MM/dd/yyyy hh:mm:ss aa').format(
       DateTime.parse(createdAt),
     );

@@ -1,6 +1,5 @@
 import 'package:bet/common/component/button/primary_button.dart';
 import 'package:bet/user/data/di/user_service_locator.dart';
-import 'package:bet/user/presentation/component/created_by_field.dart';
 import 'package:bet/user/presentation/component/first_name_field.dart';
 import 'package:bet/user/presentation/component/last_name_field.dart';
 import 'package:bet/user/presentation/component/middle_name_field.dart';
@@ -68,11 +67,11 @@ class UserModal extends StatelessWidget {
               initialValue: initialUserValue.username,
               onUsernameChanged: onUsernameChanged,
             ),
-            const SizedBox(height: 5),
-            CreatedByField(
-              initialValue: initialUserValue.createdBy,
-              onCreatedByChanged: onCreatedByChanged,
-            ),
+            // const SizedBox(height: 5),
+            // CreatedByField(
+            //   initialValue: initialUserValue.createdBy,
+            //   onCreatedByChanged: onCreatedByChanged,
+            // ),
             const SizedBox(height: 20),
             UserCreateOrUpdateButton(
               createOrUpdateButtonOnPressed: createOrUpdateButtonOnPressed,

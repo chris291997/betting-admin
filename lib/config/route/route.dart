@@ -2,7 +2,6 @@ import 'package:bet/authentication/presentation/screen/login_screen.dart';
 import 'package:bet/common/di/service_locator.dart';
 import 'package:bet/dashboard/presentation/combonent/navigation_scaffold.dart';
 import 'package:bet/event/presentation/screen/event_screen.dart';
-import 'package:bet/fighter/presentation/screen/fighter_list_screen.dart';
 import 'package:bet/user/presentation/bloc/account_bloc.dart';
 import 'package:bet/user/presentation/screen/user_list_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _eventNavigatorKey = GlobalKey<NavigatorState>();
-final _fightertNavigatorKey = GlobalKey<NavigatorState>();
+// final _fightertNavigatorKey = GlobalKey<NavigatorState>();
 final _usertNavigatorKey = GlobalKey<NavigatorState>();
 
 // no navigation animation
@@ -42,17 +41,17 @@ final router = GoRouter(
             ),
           ],
         ),
-        StatefulShellBranch(
-          navigatorKey: _fightertNavigatorKey,
-          routes: [
-            GoRoute(
-              path: FighterListScreen.routeName,
-              pageBuilder: (context, state) {
-                return const NoTransitionPage(child: FighterListScreen());
-              },
-            ),
-          ],
-        ),
+        // StatefulShellBranch(
+        //   navigatorKey: _fightertNavigatorKey,
+        //   routes: [
+        //     GoRoute(
+        //       path: FighterListScreen.routeName,
+        //       pageBuilder: (context, state) {
+        //         return const NoTransitionPage(child: FighterListScreen());
+        //       },
+        //     ),
+        //   ],
+        // ),
         StatefulShellBranch(
           navigatorKey: _usertNavigatorKey,
           routes: [

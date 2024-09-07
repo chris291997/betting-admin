@@ -33,7 +33,7 @@ class UserInput extends Equatable {
       // convert userType to pascal case
       'userType': userType.isNotEmpty
           ? userType[0].toUpperCase() + userType.substring(1)
-          : userType,
+          : 'None',
       'firstName': firstName,
       'middleName': middleName,
       'lastName': lastName,

@@ -35,11 +35,11 @@ class UserRemoteSource {
   }
 
   Future<UserOutput> deleteUser({required String id}) async {
-    final response = await _manager.delete(
+    await _manager.delete(
       '$userPath/$id',
     );
 
-    return UserOutput.fromJson(response.data);
+    return UserOutput.empty;
   }
 
   Future<UserOutput> getUserById({required String id}) async {

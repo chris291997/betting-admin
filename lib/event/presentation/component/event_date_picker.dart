@@ -24,11 +24,16 @@ class EventDatePicker extends HookWidget {
         const SizedBox(width: 10),
         ElevatedButton(
           onPressed: () async {
+            final now = DateTime.now();
+            final today = DateTime(now.year, now.month, now.day);
+
             DateTime? selectedDate = await showDatePicker(
               context: context,
-              initialDate: date.value ?? DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime(2025),
+              initialDate: date.value != null && date.value!.isAfter(today)
+                  ? date.value!
+                  : today,
+              firstDate: today,
+              lastDate: DateTime(now.year + 1),
             );
 
             if (selectedDate != null) {

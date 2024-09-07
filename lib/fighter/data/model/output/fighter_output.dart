@@ -1,6 +1,6 @@
 part of '../../di/fighter_service_locator.dart';
 
-class FighterOutput extends Equatable {
+class FighterOutput extends Equatable implements JsonSerializable {
   const FighterOutput({
     this.id = '',
     this.name = '',
@@ -57,4 +57,14 @@ class FighterOutput extends Equatable {
         createdAt,
         updatedAt,
       ];
+
+  @override
+  Map<String, dynamic> toTableJson() {
+    return {
+      'name': name,
+      'weight': weight,
+      'breed': breed,
+      'trainer': trainer,
+    };
+  }
 }

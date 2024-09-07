@@ -14,22 +14,19 @@ extension AppTheme on BuildContext {
 final themeData = ThemeData(
   colorScheme: AppColors.scheme,
   elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ButtonStyle(
-      backgroundColor: WidgetStateProperty.all(AppColors.scheme.primary),
-      foregroundColor: WidgetStateProperty.all(AppColors.scheme.onPrimary),
-      textStyle:
-          WidgetStateProperty.all(AppTextStyle.defaultTextStyle().button),
-      padding: WidgetStateProperty.all(
-        const EdgeInsets.symmetric(
-          vertical: 16.0,
-          horizontal: 24.0,
-        ),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.scheme.primary,
+      foregroundColor: AppColors.scheme.onPrimary,
+      disabledBackgroundColor: AppColors.scheme.primaryFixed,
+      disabledForegroundColor: AppColors.scheme.onPrimaryFixed,
+      textStyle: AppTextStyle.defaultTextStyle().button,
+      padding: const EdgeInsets.symmetric(
+        vertical: 16.0,
+        horizontal: 24.0,
       ),
-      shape: WidgetStateProperty.all(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            AppLayout.layout.largeRadius,
-          ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          AppLayout.layout.largeRadius,
         ),
       ),
     ),

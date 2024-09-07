@@ -1,11 +1,16 @@
 import 'package:bet/common/component/button/primary_button.dart';
 import 'package:bet/common/component/button/secondary_button.dart';
+import 'package:bet/common/component/textfield/base_textfield.dart';
+import 'package:bet/common/di/service_locator.dart';
+import 'package:bet/common/helper/extension/string.dart';
+import 'package:bet/common/theme/theme.dart';
 import 'package:bet/fight/data/di/fight_service_locator.dart';
 import 'package:bet/fight/presentation/bloc/fight_bloc.dart';
 import 'package:bet/fight/presentation/event/fight_event.dart';
 import 'package:bet/fight/presentation/state/fight_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 
 class FightDetailsScreen extends StatelessWidget {
@@ -49,6 +54,8 @@ class _FightDetails extends StatelessWidget {
           return const CircularProgressIndicator();
         }
 
+        final status = state.fight.status;
+
         return CustomScrollView(
           shrinkWrap: true,
           slivers: [
@@ -76,43 +83,49 @@ class _FightDetails extends StatelessWidget {
                   const Gap(20),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 800),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Column(
                       children: [
-                        Flexible(
-                          child: PrimaryButton(
-                            state: !state.fight.isLocked &&
-                                    !state.fight.isCanceled &&
-                                    !state.fight.isDraw
-                                ? PrimaryButtonState.enabled
-                                : PrimaryButtonState.disabled,
-                            onPressed: () {
-                              context.read<FightBloc>().add(
-                                    FightOpenedBets(),
-                                  );
-                            },
-                            labelText: 'Open Bets',
-                          ),
-                        ),
-                        const Gap(20),
-                        Flexible(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: SecondaryButton(
-                              state: state.fight.isLocked &&
-                                      !state.fight.isCanceled &&
-                                      !state.fight.isDraw &&
-                                      state.fight.winnerId.isEmpty
-                                  ? CircularButtonState.enabled
-                                  : CircularButtonState.disabled,
-                              onPressed: () {
-                                context.read<FightBloc>().add(
-                                      FightClosedBets(),
-                                    );
-                              },
-                              labelText: 'Close Bets',
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: PrimaryButton(
+                                state: (!state.fight.isLocked &&
+                                            !state.fight.isCanceled &&
+                                            !state.fight.isDraw) ||
+                                        status == 'InProgress'
+                                    ? PrimaryButtonState.enabled
+                                    : PrimaryButtonState.disabled,
+                                onPressed: () {
+                                  context.read<FightBloc>().add(
+                                        FightOpenedBets(),
+                                      );
+                                },
+                                labelText: 'Open Bets',
+                              ),
                             ),
-                          ),
+                            const Gap(20),
+                            Flexible(
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: SecondaryButton(
+                                  state: state.fight.isLocked &&
+                                          !state.fight.isCanceled &&
+                                          !state.fight.isDraw &&
+                                          state.fight.winnerId.isEmpty &&
+                                          status != 'InProgress'
+                                      ? CircularButtonState.enabled
+                                      : CircularButtonState.disabled,
+                                  onPressed: () {
+                                    context.read<FightBloc>().add(
+                                          FightClosedBets(),
+                                        );
+                                  },
+                                  labelText: 'Close Bets',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -191,6 +204,11 @@ class _FightDetails extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const Gap(20),
+                  if (status == 'NotStarted')
+                    _CancelTransactionButton(
+                      fightId: state.fight.id,
+                    ),
                 ],
               ),
             ),
@@ -245,6 +263,110 @@ class ConcludeModal extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CancelTransactionButton extends StatelessWidget {
+  const _CancelTransactionButton({required this.fightId});
+
+  final String fightId;
+
+  @override
+  Widget build(BuildContext context) {
+    return SecondaryButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (_) => _CancelTransactionModal(fightId: fightId),
+        );
+      },
+      labelText: 'Cancel Transaction',
+    );
+  }
+}
+
+class _CancelTransactionModal extends HookWidget {
+  const _CancelTransactionModal({required this.fightId});
+
+  final String fightId;
+
+  Future<void> cancelTransaction(String transactionId) async {
+    await networkManager.get('/bets/transaction/$transactionId/void');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textController = useTextEditingController();
+
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Cancel Transaction',
+                style: context.textStyle.headline6,
+              ),
+              Text(
+                'Warning: You cannot undo this action after confirming.',
+                style: context.textStyle.subtitle2.copyWith(
+                  color: context.colors.errorContainer,
+                ),
+              ),
+              const Gap(20),
+              BaseTextfield(
+                controller: textController,
+                onChanged: (value) {},
+                hintText: 'Enter Transaction ID',
+              ),
+              const Gap(10),
+              HookBuilder(builder: (context) {
+                final state = useState(PrimaryButtonState.disabled);
+
+                textController.addListener(() {
+                  state.value = textController.text.isNotEmptyOrWhiteSpace
+                      ? PrimaryButtonState.enabled
+                      : PrimaryButtonState.disabled;
+                });
+
+                return PrimaryButton(
+                  onPressed: () async {
+                    state.value = PrimaryButtonState.loading;
+                    await cancelTransaction(textController.text).then((_) {
+                      state.value = PrimaryButtonState.enabled;
+                      Navigator.pop(context);
+                    }).catchError((error) {
+                      state.value = PrimaryButtonState.enabled;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Error: Failed to cancel transaction'),
+                        ),
+                      );
+                    });
+                  },
+                  state: state.value,
+                  labelText: 'Confirm',
+                  color: AppColors.scheme.errorContainer,
+                  disabledColor:
+                      AppColors.scheme.errorContainer.withOpacity(0.4),
+                );
+              }),
+              const Gap(20),
+              SizedBox(
+                width: double.infinity,
+                child: SecondaryButton(
+                  onPressed: () => Navigator.pop(context),
+                  labelText: 'Cancel',
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -136,12 +136,12 @@ enum UserType {
   }
 
   static UserType fromString(String value) {
-    switch (value) {
-      case 'None':
+    switch (value.toLowerCase()) {
+      case 'none':
         return UserType.none;
-      case 'Pos':
+      case 'pos':
         return UserType.pos;
-      case 'Admin':
+      case 'admin':
         return UserType.admin;
       default:
         return UserType.none;

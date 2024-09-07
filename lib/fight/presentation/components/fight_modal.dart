@@ -1,8 +1,6 @@
 import 'package:bet/common/component/button/primary_button.dart';
 import 'package:bet/fight/data/di/fight_service_locator.dart';
 import 'package:bet/fight/presentation/components/fight_add_or_update_button.dart';
-import 'package:bet/fight/presentation/components/fight_select_fighter.dart';
-import 'package:bet/fight/presentation/components/fight_start_time_picker.dart';
 import 'package:bet/fighter/data/di/fighter_service_locator.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
@@ -39,27 +37,10 @@ class FightModal extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FightStartTimePicker(
-              // initialTime: initialFightValue?.startTime,
-              onTimeChanged: onTimeChanged,
-            ),
-            const SizedBox(height: 5),
-            FightSelectFighter(
-              fighterType: FighterType.meron,
-              onFighterSelected: onMeronSelected,
-              initialSelectedFighter: FighterOutput(
-                id: initialFightValue?.meronId ?? '',
-              ),
-            ),
-            const SizedBox(height: 5),
-            FightSelectFighter(
-              fighterType: FighterType.wala,
-              onFighterSelected: onWalaSelected,
-              initialSelectedFighter: FighterOutput(
-                id: initialFightValue?.walaId ?? '',
-              ),
-            ),
-            const SizedBox(height: 20),
+            if (type.isAdd) ...[
+              const Text('Are you sure you want to add another fight?'),
+              const SizedBox(height: 20),
+            ],
             FightAddOrUpdateButton(
               state: createOrUpdateFightButtonState,
               label: buttonLabel,

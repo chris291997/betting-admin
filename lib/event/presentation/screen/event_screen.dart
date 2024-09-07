@@ -1,5 +1,4 @@
 import 'package:bet/common/component/button/primary_button.dart';
-import 'package:bet/common/component/button/secondary_button.dart';
 import 'package:bet/common/component/table/custom_data_table.dart';
 import 'package:bet/event/data/di/event_service_locator.dart';
 import 'package:bet/event/presentation/bloc/create_event_bloc.dart';
@@ -50,83 +49,102 @@ class _EventScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Events')),
-      body: BlocListener<UpdateOrDeleteEventBloc, UpdateOrDeleteState>(
-        listener: (context, state) {
-          if (state.deleteStatus.isSuccess || state.updateStatus.isSuccess) {
-            BlocProvider.of<EventListBloc>(context)
-                .add(EventListEventFetched());
-          }
-        },
-        child: BlocBuilder<EventListBloc, EventListState>(
-          builder: (context, state) {
-            if (state.status.isError) {
-              return const Center(child: Text('Failed to fetch events'));
-            }
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    BlocProvider.of<EventListBloc>(context)
+                        .add(EventListEventFetched());
+                  },
+                  icon: const Icon(Icons.refresh),
+                ),
+                // Add
+                IconButton(
+                  onPressed: () {
+                    _showEventModal(context, EventModalType.add);
+                  },
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
+            Expanded(
+              child: BlocListener<UpdateOrDeleteEventBloc, UpdateOrDeleteState>(
+                listener: (context, state) {
+                  if (state.deleteStatus.isSuccess ||
+                      state.updateStatus.isSuccess) {
+                    BlocProvider.of<EventListBloc>(context)
+                        .add(EventListEventFetched());
+                  }
+                },
+                child: BlocBuilder<EventListBloc, EventListState>(
+                  builder: (context, state) {
+                    if (state.status.isError) {
+                      return const Center(
+                          child: Text('Failed to fetch events'));
+                    }
 
-            if (state.status.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+                    if (state.status.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-            if (state.status.isInitial) {
-              return const SizedBox();
-            }
+                    if (state.status.isInitial) {
+                      return const SizedBox();
+                    }
 
-            final events = state.events;
+                    final events = state.events;
 
-            if (events.isEmpty) {
-              return const Center(child: Text('No events found'));
-            }
+                    if (events.isEmpty) {
+                      return const Center(child: Text('No events found'));
+                    }
 
-            return BlocBuilder<AccountBloc, AccountState>(
-                builder: (context, state) {
-              return Center(
-                child: SizedBox(
-                  width: 1000,
-                  child: CustomDataTable<EventOutput>(
-                    columns: _columns,
-                    objects: events,
-                    onSelectChanged: (event) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FightListScreen(
-                            eventId: event.id,
+                    return BlocBuilder<AccountBloc, AccountState>(
+                        builder: (context, state) {
+                      return CustomDataTable<EventOutput>(
+                        columns: _columns,
+                        objects: events,
+                        onSelectChanged: (event) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FightListScreen(
+                                eventId: event.id,
+                              ),
+                            ),
+                          );
+                        },
+                        onDelete: (event) => showDialog(
+                          context: context,
+                          builder: (_) =>
+                              BlocProvider<UpdateOrDeleteEventBloc>.value(
+                            value: BlocProvider.of<UpdateOrDeleteEventBloc>(
+                              context,
+                            ),
+                            child: DeleteEventModal(
+                              eventId: event.id,
+                            ),
                           ),
                         ),
+                        onUpdate: (event) {
+                          _showEventModal(
+                            context,
+                            EventModalType.edit,
+                            initialEventValue: event,
+                            creatorId: state.userOutput.id,
+                          );
+                        },
                       );
-                    },
-                    onDelete: (event) => showDialog(
-                      context: context,
-                      builder: (_) =>
-                          BlocProvider<UpdateOrDeleteEventBloc>.value(
-                        value: BlocProvider.of<UpdateOrDeleteEventBloc>(
-                          context,
-                        ),
-                        child: DeleteEventModal(
-                          eventId: event.id,
-                        ),
-                      ),
-                    ),
-                    onUpdate: (event) {
-                      _showEventModal(
-                        context,
-                        EventModalType.edit,
-                        initialEventValue: event,
-                        creatorId: state.userOutput.id,
-                      );
-                    },
-                  ),
+                    });
+                  },
                 ),
-              );
-            });
-          },
+              ),
+            ),
+          ],
         ),
-      ),
-      floatingActionButton: SecondaryButton(
-        height: 30,
-        width: 120,
-        onPressed: () => _showEventModal(context, EventModalType.add),
-        labelText: 'Add Event',
       ),
     );
   }

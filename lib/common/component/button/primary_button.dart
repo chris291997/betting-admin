@@ -6,6 +6,8 @@ class PrimaryButton extends StatelessWidget {
     required this.onPressed,
     this.labelText = '',
     this.label,
+    this.color,
+    this.disabledColor,
     this.state = PrimaryButtonState.enabled,
     super.key,
   });
@@ -13,6 +15,8 @@ class PrimaryButton extends StatelessWidget {
   final Widget? label;
   final String labelText;
   final void Function() onPressed;
+  final Color? color;
+  final Color? disabledColor;
   final PrimaryButtonState state;
 
   @override
@@ -21,6 +25,10 @@ class PrimaryButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: state.isEnabled ? onPressed : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color ?? context.colors.primary,
+          disabledBackgroundColor: disabledColor ?? context.colors.primaryFixed,
+        ),
         child: state.isLoading
             ? SizedBox(
                 height: 15,

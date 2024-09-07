@@ -46,9 +46,8 @@ class EventOutput extends Equatable implements JsonSerializable {
   @override
   Map<String, dynamic> toTableJson() {
     // convert eventDate format to MM/dd/yyyy HH:mm:ss AA
-    final eventDateFormatted = eventDate != null
-        ? DateFormat('MM/dd/yyyy hh:mm:ss aa').format(eventDate!)
-        : null;
+    final eventDateFormatted =
+        eventDate != null ? DateFormat('MM/dd/yyyy').format(eventDate!) : null;
 
     return {
       'eventName': eventName,

@@ -47,19 +47,19 @@ class SideNavigationBar extends StatelessWidget {
             onTap: () => _onTap(0),
             isSelected: navigationShell.currentIndex == 0,
           ),
-          NavigationBarItem(
-            title: 'Fighters',
-            selectedIcon: const Icon(Icons.sports_mma),
-            unselectedIcon: const Icon(Icons.sports_mma_outlined),
-            onTap: () => _onTap(1),
-            isSelected: navigationShell.currentIndex == 1,
-          ),
+          // NavigationBarItem(
+          //   title: 'Fighters',
+          //   selectedIcon: const Icon(Icons.sports_mma),
+          //   unselectedIcon: const Icon(Icons.sports_mma_outlined),
+          //   onTap: () => _onTap(1),
+          //   isSelected: navigationShell.currentIndex == 1,
+          // ),
           NavigationBarItem(
             title: 'Users',
             selectedIcon: const Icon(Icons.person),
             unselectedIcon: const Icon(Icons.person_outline),
-            onTap: () => _onTap(2),
-            isSelected: navigationShell.currentIndex == 2,
+            onTap: () => _onTap(1),
+            isSelected: navigationShell.currentIndex == 1,
           ),
           NavigationBarItem(
             title: 'Logout',

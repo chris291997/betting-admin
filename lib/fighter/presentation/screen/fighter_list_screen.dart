@@ -3,6 +3,7 @@ import 'package:bet/common/component/button/secondary_button.dart';
 import 'package:bet/fighter/data/di/fighter_service_locator.dart';
 import 'package:bet/fighter/presentation/bloc/create_fighter_bloc.dart';
 import 'package:bet/fighter/presentation/bloc/fighter_list_bloc.dart';
+import 'package:bet/fighter/presentation/bloc/fighter_update_or_delete_bloc.dart';
 import 'package:bet/fighter/presentation/component/fighter_list_view.dart';
 import 'package:bet/fighter/presentation/component/fighter_modal.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,11 @@ class FighterListScreen extends StatelessWidget {
       providers: [
         BlocProvider(
           lazy: false,
-          create: (context) => FighterListBloc(fighterRepository)..add(FighterListFetched()),
+          create: (context) =>
+              FighterListBloc(fighterRepository)..add(FighterListFetched()),
+        ),
+        BlocProvider(
+          create: (context) => FighterUpdateOrDeleteBloc(fighterRepository),
         ),
       ],
       child: const _FighterListScreen(),
