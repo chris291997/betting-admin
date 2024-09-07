@@ -1,4 +1,4 @@
-# bet
+# Betting App Admin
 
 A new Flutter project.
 
@@ -14,3 +14,14 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+# Features
+- Login
+- Add, View, and Update Users
+- Add, View, Update, and Delete Events
+- Add, View, and Delete Fights
+- Open and Close Bets
+- Start, Cancel, Draw and Conclude a Winner
+- Cancel Transaction
+
+P.S Credentials are not included in this repository
